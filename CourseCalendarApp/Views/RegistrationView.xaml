@@ -1,0 +1,48 @@
+<UserControl
+    x:Class="CourseCalendarApp.Views.RegistrationView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
+
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:modern="http://schemas.modernwpf.com/2019"
+
+    xmlns:s="https://github.com/canton7/Stylet"
+    xmlns:viewModels="clr-namespace:CourseCalendarApp.ViewModels"
+
+    d:DataContext="{d:DesignInstance Type=viewModels:RegistrationViewModel}">
+    <GroupBox Header="New Account" HorizontalAlignment="Center">
+        <modern:SimpleStackPanel>
+            <GroupBox Header="Select Manager">
+                <ComboBox
+                    ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedManager}"
+                    DisplayMemberPath="Data.Name" />
+            </GroupBox>
+
+            <GroupBox Header="Access Level">
+                <ComboBox SelectedItem="{Binding AccessType}" SelectedIndex="0">
+                    <ComboBoxItem>Admin</ComboBoxItem>
+                    <ComboBoxItem>User</ComboBoxItem>
+                </ComboBox>
+            </GroupBox>
+
+            <ui:TextBox Icon="Briefcase20" MinWidth="150" PlaceholderText="Title"
+                        Text="{Binding Title}" />
+
+            <GroupBox Header="Name">
+                <modern:SimpleStackPanel Orientation="Horizontal">
+                    <ui:TextBox Icon="BookContacts20" MinWidth="150" PlaceholderText="Name"
+                                Text="{Binding Name}" />
+                </modern:SimpleStackPanel>
+            </GroupBox>
+
+            <ui:TextBox Icon="Person12" PlaceholderText="Username" Text="{Binding Username, Mode=OneWayToSource}" />
+            <ui:PasswordBox
+                Icon="Password16" PlaceholderText="Password"
+                Password="{Binding Password, Mode=TwoWay}" />
+            <ui:Button Appearance="Primary" Command="{s:Action Register}" HorizontalAlignment="Right">Register</ui:Button>
+        </modern:SimpleStackPanel>
+    </GroupBox>
+</UserControl>

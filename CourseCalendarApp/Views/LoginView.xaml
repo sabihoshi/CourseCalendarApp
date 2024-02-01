@@ -1,0 +1,40 @@
+<UserControl
+    x:Class="CourseCalendarApp.Views.LoginView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
+
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:modern="http://schemas.modernwpf.com/2019"
+
+    xmlns:s="https://github.com/canton7/Stylet"
+    xmlns:viewModels="clr-namespace:CourseCalendarApp.ViewModels"
+
+    d:DataContext="{d:DesignInstance Type=viewModels:LoginViewModel}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="Welcome!" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <modern:SimpleStackPanel MinWidth="450">
+                <ui:InfoBar
+                    Title="Error" Severity="Error" IsOpen="{Binding LoginError, Mode=TwoWay}"
+                    Message="Invalid Username or Password! Please try again." />
+
+                <ui:TextBox Icon="Person12" PlaceholderText="Username" Text="{Binding Username, Mode=OneWayToSource}" />
+                <ui:PasswordBox
+                    Icon="Password16" PlaceholderText="Password"
+                    Password="{Binding Password, Mode=TwoWay}" />
+                <modern:SimpleStackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock />
+                    <ui:Button Command="{s:Action Login}" Appearance="Primary" IsDefault="True">Login</ui:Button>
+                </modern:SimpleStackPanel>
+            </modern:SimpleStackPanel>
+        </GroupBox>
+    </Grid>
+</UserControl>

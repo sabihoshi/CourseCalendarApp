@@ -1,0 +1,182 @@
+﻿<UserControl
+    x:Class="CourseCalendarApp.Views.PersonalInfoView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
+
+    xmlns:modern="http://schemas.modernwpf.com/2019"
+
+    xmlns:viewModels="clr-namespace:CourseCalendarApp.ViewModels"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:s="https://github.com/canton7/Stylet"
+
+    d:DataContext="{d:DesignInstance Type=viewModels:PersonalInfoViewModel}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="0">
+            <modern:SimpleStackPanel>
+                <ui:CardExpander Icon="Person12" Header="Basic Information" IsExpanded="True">
+                    <modern:SimpleStackPanel>
+                        <modern:SimpleStackPanel Orientation="Horizontal">
+                            <GroupBox Header="User #">
+                                <ui:TextBox Icon="NumberSymbol16" Text="{Binding User.CompanyId}" />
+                            </GroupBox>
+
+                            <GroupBox Header="Status ">
+                                <ui:TextBox PlaceholderText="Active" Text="{Binding User.Status}" />
+                            </GroupBox>
+                        </modern:SimpleStackPanel>
+
+                        <GroupBox Header="Manager">
+                            <ComboBox
+                                ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedManager}"
+                                DisplayMemberPath="Data.Name" />
+                        </GroupBox>
+
+                        <modern:SimpleStackPanel Orientation="Horizontal">
+                            <GroupBox Header="Full Name">
+                                <modern:SimpleStackPanel Orientation="Horizontal">
+                                    <ui:TextBox Icon="BookContacts20" MinWidth="150" PlaceholderText="First"
+                                                Text="{Binding Name}" />
+                                    <ui:TextBox MinWidth="150" PlaceholderText="Middle"
+                                                Text="{Binding MiddleName}" />
+                                    <ui:TextBox MinWidth="150" PlaceholderText="Last"
+                                                Text="{Binding LastName}" />
+                                </modern:SimpleStackPanel>
+                            </GroupBox>
+                        </modern:SimpleStackPanel>
+
+                        <modern:SimpleStackPanel Orientation="Horizontal">
+                            <GroupBox Header="Preferred Name">
+                                <ui:TextBox MinWidth="150" PlaceholderText="(Optional)"
+                                            Text="{Binding PreferredName}" />
+                            </GroupBox>
+                        </modern:SimpleStackPanel>
+
+                        <modern:SimpleStackPanel Orientation="Horizontal">
+                            <GroupBox Header="Birth Date">
+                                <modern:SimpleStackPanel Orientation="Horizontal">
+                                    <DatePicker SelectedDate="{Binding DateOfBirth}" />
+                                    <TextBlock VerticalAlignment="Center">
+                                        Age: <Run Text="{Binding Age, Mode=OneWay}" />
+                                    </TextBlock>
+                                </modern:SimpleStackPanel>
+                            </GroupBox>
+                        </modern:SimpleStackPanel>
+
+                        <modern:SimpleStackPanel Orientation="Horizontal">
+                            <GroupBox Header="Gender">
+                                <ui:TextBox PlaceholderText="Gender" Text="{Binding Gender}" />
+                            </GroupBox>
+                            <GroupBox Header="Marital Status">
+                                <ui:TextBox PlaceholderText="Marital Status"
+                                            Text="{Binding MaritalStatus}" />
+                            </GroupBox>
+                        </modern:SimpleStackPanel>
+
+                        <GroupBox Header="Contact">
+                            <modern:SimpleStackPanel>
+                                <modern:SimpleStackPanel>
+                                    <TextBlock FontSize="11">Email</TextBlock>
+                                    <ui:TextBox Icon="Phone20" PlaceholderText="Email Address"
+                                                Text="{Binding EmailAddress}" />
+                                </modern:SimpleStackPanel>
+
+                                <modern:SimpleStackPanel Orientation="Horizontal">
+                                    <modern:SimpleStackPanel>
+                                        <TextBlock FontSize="11">Mobile</TextBlock>
+                                        <ui:TextBox Icon="Phone20" PlaceholderText="Phone #"
+                                                    Text="{Binding PhoneNumber}" />
+                                    </modern:SimpleStackPanel>
+
+                                    <modern:SimpleStackPanel>
+                                        <TextBlock FontSize="11">Telephone</TextBlock>
+                                        <ui:TextBox Icon="Building20" PlaceholderText="Telephone #"
+                                                    Text="{Binding TelephoneNumber}" />
+                                    </modern:SimpleStackPanel>
+                                </modern:SimpleStackPanel>
+                            </modern:SimpleStackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Government">
+                            <modern:SimpleStackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" VerticalAlignment="Center">PhilHealth</TextBlock>
+                                    <ui:TextBox Grid.Column="1" Margin="8,0,0,0" Icon="Doctor20"
+                                                PlaceholderText="PhilHealth #"
+                                                HorizontalAlignment="Stretch"
+                                                Text="{Binding PhilHealth}" />
+                                </Grid>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" VerticalAlignment="Center">SSS</TextBlock>
+                                    <ui:TextBox Grid.Column="1" Margin="8,0,0,0" Icon="Doctor20"
+                                                PlaceholderText="SSS #"
+                                                HorizontalAlignment="Stretch"
+                                                Text="{Binding Sss}" />
+                                </Grid>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" VerticalAlignment="Center">TIN</TextBlock>
+                                    <ui:TextBox Grid.Column="1" Margin="8,0,0,0" Icon="Doctor20"
+                                                PlaceholderText="TIN #"
+                                                HorizontalAlignment="Stretch"
+                                                Text="{Binding Tin}" />
+                                </Grid>
+                            </modern:SimpleStackPanel>
+                        </GroupBox>
+                    </modern:SimpleStackPanel>
+                </ui:CardExpander>
+
+                <ui:CardExpander Icon="Home16" Header="Address" IsExpanded="True">
+                    <modern:SimpleStackPanel HorizontalAlignment="Left">
+                        <ui:TextBox PlaceholderText="Street" MinWidth="300"
+                                    Text="{Binding Street}" />
+
+                        <modern:SimpleStackPanel Orientation="Horizontal">
+                            <ui:TextBox PlaceholderText="City" TextWrapping="Wrap"
+                                        Text="{Binding City}" />
+                            <ui:TextBox PlaceholderText="State" TextWrapping="Wrap"
+                                        Text="{Binding AddressState}" />
+                            <ui:TextBox PlaceholderText="Zip Code" TextWrapping="Wrap"
+                                        Text="{Binding ZipCode}" />
+                        </modern:SimpleStackPanel>
+                    </modern:SimpleStackPanel>
+                </ui:CardExpander>
+                <ui:CardExpander Icon="BriefcaseMedical20" Header="Emergency Contacts" IsExpanded="True">
+                    <modern:SimpleStackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                        <ui:TextBox MinWidth="320" PlaceholderText="Name"
+                                    Text="{Binding ContactName}" />
+                        <ui:TextBox PlaceholderText="Phone #" Text="{Binding ContactNumber}" />
+                        <ui:TextBox PlaceholderText="Relationship" Text="{Binding Relationship}" />
+                    </modern:SimpleStackPanel>
+                </ui:CardExpander>
+            </modern:SimpleStackPanel>
+        </ScrollViewer>
+
+        <ui:Button Grid.Row="1" Margin="16,8" Command="{s:Action Save}" Appearance="Primary"
+                   HorizontalAlignment="Right">
+            Save Changes
+        </ui:Button>
+    </Grid>
+</UserControl>
