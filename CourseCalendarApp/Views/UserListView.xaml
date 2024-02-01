@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="CourseCalendarApp.Views.EmployeeListView"
+    x:Class="CourseCalendarApp.Views.UserListView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
@@ -15,10 +15,10 @@
     xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     xmlns:models="clr-namespace:CourseCalendarApp.Models"
 
-    d:DataContext="{d:DesignInstance Type=viewModels:EmployeeListViewModel}">
+    d:DataContext="{d:DesignInstance Type=viewModels:UserListViewModel}">
     <UserControl.Resources>
         <modernWpf:GroupKeyConverter x:Key="GroupKeyConverter" />
-        <CollectionViewSource x:Key="CollectionSource" Source="{Binding FilteredEmployees}">
+        <CollectionViewSource x:Key="CollectionSource" Source="{Binding FilteredUsers}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="Data.Name" Converter="{StaticResource GroupKeyConverter}" />
             </CollectionViewSource.GroupDescriptions>

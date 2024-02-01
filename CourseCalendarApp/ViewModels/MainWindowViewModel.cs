@@ -37,7 +37,7 @@ public class MainWindowViewModel : Conductor<IScreen>
         LoginPage        = _ioc.Get<LoginViewModel>();
         AdminPage        = _ioc.Get<AdminViewModel>();
         PersonalInfoPage = _ioc.Get<PersonalInfoViewModel>();
-        EmployeeListPage = _ioc.Get<EmployeeListViewModel>();
+        UserListPage     = _ioc.Get<UserListViewModel>();
         RegistrationPage = _ioc.Get<RegistrationViewModel>();
         CalendarPage     = _ioc.Get<CalendarViewModel>();
     }
@@ -51,8 +51,6 @@ public class MainWindowViewModel : Conductor<IScreen>
     public bool IsLoggedOut => LoggedInUser is null;
 
     public CalendarViewModel CalendarPage { get; set; }
-
-    public EmployeeListViewModel EmployeeListPage { get; }
 
     public HomeViewModel HomePage { get; }
 
@@ -73,6 +71,8 @@ public class MainWindowViewModel : Conductor<IScreen>
     public SymbolRegular LogIcon => IsLoggedIn ? SymbolRegular.DoorArrowLeft20 : SymbolRegular.Person12;
 
     public User? LoggedInUser { get; set; }
+
+    public UserListViewModel UserListPage { get; }
 
     public async Task Login(User employee)
     {

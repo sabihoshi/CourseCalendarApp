@@ -1,9 +1,9 @@
-﻿using CourseCalendarApp.Models;
+﻿using System.Collections.ObjectModel;
+using System.Windows.Media;
+using CourseCalendarApp.Models;
 using Stylet;
 using StyletIoC;
 using Syncfusion.UI.Xaml.Scheduler;
-using System.Collections.ObjectModel;
-using System.Windows.Media;
 using Wpf.Ui.Mvvm.Contracts;
 
 namespace CourseCalendarApp.ViewModels;
@@ -23,8 +23,6 @@ public class CalendarViewModel(
     private readonly EventColor _foregroundColor = new() { Red = 255, Green = 255, Blue = 255 };
     private readonly MainWindowViewModel _main = main;
     private CalendarViewModel _view = null!;
-
-
 
     public ScheduleAppointmentCollection Events { get; set; } = new();
 
@@ -56,137 +54,6 @@ public class CalendarViewModel(
         }
     }
 
-    private ScheduleAppointmentCollection GenerateRandomAppointments()
-    {
-        var WorkWeekDays = new ObservableCollection<DateTime>();
-        var WorkWeekSubjects = new ObservableCollection<string>()
-                                                           { "GoToMeeting", "Business Meeting", "Conference", "Project Status Discussion",
-                                                             "Auditing", "Client Meeting", "Generate Report", "Target Meeting", "General Meeting" };
-
-        var NonWorkingDays = new ObservableCollection<DateTime>();
-        var NonWorkingSubjects = new ObservableCollection<string>()
-                                                           { "Go to party", "Order Pizza", "Buy Gift",
-                                                             "Vacation" };
-        var YearlyOccurrance = new ObservableCollection<DateTime>();
-        var YearlyOccurranceSubjects = new ObservableCollection<string>() { "Wedding Anniversary", "Sam's Birthday", "Jenny's Birthday" };
-        var MonthlyOccurrance = new ObservableCollection<DateTime>();
-        var MonthlyOccurranceSubjects = new ObservableCollection<string>() { "Pay House Rent", "Car Service", "Medical Check Up" };
-        var WeekEndOccurrance = new ObservableCollection<DateTime>();
-        var WeekEndOccurranceSubjects = new ObservableCollection<string>() { "FootBall Match", "TV Show" };
-
-
-        var brush = new ObservableCollection<SolidColorBrush>();
-        brush.Add(new SolidColorBrush(Color.FromRgb(133, 81, 242)));
-        brush.Add(new SolidColorBrush(Color.FromRgb(140, 245, 219)));
-        brush.Add(new SolidColorBrush(Color.FromRgb(83, 99, 250)));
-        brush.Add(new SolidColorBrush(Color.FromRgb(255, 222, 133)));
-        brush.Add(new SolidColorBrush(Color.FromRgb(45, 153, 255)));
-        brush.Add(new SolidColorBrush(Color.FromRgb(253, 183, 165)));
-        brush.Add(new SolidColorBrush(Color.FromRgb(198, 237, 115)));
-        brush.Add(new SolidColorBrush(Color.FromRgb(253, 185, 222)));
-        brush.Add(new SolidColorBrush(Color.FromRgb(255, 222, 133)));
-
-        Random ran = new Random();
-        DateTime today = DateTime.Now;
-        if (today.Month == 12)
-        {
-            today = today.AddMonths(-1);
-        }
-        else if (today.Month == 1)
-        {
-            today = today.AddMonths(1);
-        }
-
-        DateTime startMonth = new DateTime(today.Year, today.Month - 1, 1, 0, 0, 0);
-        DateTime endMonth = new DateTime(today.Year, today.Month + 1, 30, 0, 0, 0);
-        DateTime dt = new DateTime(today.Year, today.Month, 15, 0, 0, 0);
-        int day = (int)startMonth.DayOfWeek;
-        DateTime CurrentStart = startMonth.AddDays(-day);
-
-        var appointments = new ScheduleAppointmentCollection();
-        for (int i = 0; i < 90; i++)
-        {
-            if (i % 7 == 0 || i % 7 == 6)
-            {
-                //add weekend appointments
-                NonWorkingDays.Add(CurrentStart.AddDays(i));
-            }
-            else
-            {
-                //Add Workweek appointment
-                WorkWeekDays.Add(CurrentStart.AddDays(i));
-            }
-        }
-
-        for (int i = 0; i < 50; i++)
-        {
-            DateTime date = WorkWeekDays[ran.Next(0, WorkWeekDays.Count)].AddHours(ran.Next(9, 17));
-            appointments.Add(new ScheduleAppointment()
-            {
-                StartTime = date,
-                EndTime = date.AddHours(1),
-                AppointmentBackground = brush[i % brush.Count],
-                Foreground = GetAppointmentForeground(brush[i % brush.Count]),
-                Subject = WorkWeekSubjects[i % WorkWeekSubjects.Count]
-            });
-        }
-        int j = 0;
-        int k = 0;
-        int l = 0;
-
-        while (j < YearlyOccurranceSubjects.Count)
-        {
-            DateTime date = NonWorkingDays[ran.Next(0, NonWorkingDays.Count)];
-            appointments.Add(new ScheduleAppointment()
-            {
-                StartTime = date,
-                EndTime = date.AddHours(1),
-                AppointmentBackground = brush[1],
-                Foreground = GetAppointmentForeground(brush[1]),
-                Subject = YearlyOccurranceSubjects[j]
-            });
-            j++;
-        }
-        while (k < MonthlyOccurranceSubjects.Count)
-        {
-            DateTime date = NonWorkingDays[ran.Next(0, NonWorkingDays.Count)].AddHours(ran.Next(9, 23));
-            appointments.Add(new ScheduleAppointment()
-            {
-                StartTime = date,
-                EndTime = date.AddHours(1),
-                AppointmentBackground = brush[k],
-                Foreground = GetAppointmentForeground(brush[k]),
-                Subject = MonthlyOccurranceSubjects[k]
-            });
-            k++;
-        }
-        while (l < WeekEndOccurranceSubjects.Count)
-        {
-            DateTime date = NonWorkingDays[ran.Next(0, NonWorkingDays.Count)].AddHours(ran.Next(0, 23));
-            appointments.Add(new ScheduleAppointment()
-            {
-                StartTime = date,
-                EndTime = date.AddHours(1),
-                AppointmentBackground = brush[l],
-                Foreground = GetAppointmentForeground(brush[1]),
-                Subject = WeekEndOccurranceSubjects[l]
-            });
-            l++;
-        }
-
-        return appointments;
-    }
-
-    private Brush GetAppointmentForeground(Brush backgroundColor)
-    {
-        if (backgroundColor.ToString().Equals("#FF8551F2") || backgroundColor.ToString().Equals("#FF5363FA") ||
-            backgroundColor.ToString().Equals("#FF2D99FF"))
-            return Brushes.White;
-        else
-            return new SolidColorBrush(Color.FromRgb(51, 51, 51));
-    }
-
-
     public void OnEditorClosed(SfScheduler? sender, AppointmentEditorClosingEventArgs e)
     {
         switch (e.Action)
@@ -196,7 +63,8 @@ public class CalendarViewModel(
                 var appointment = e.Appointment;
 
                 var fg = _db.Set<EventColor>().FirstOrDefault(x => x.Equals(new EventColor(appointment.Foreground)));
-                var bg = _db.Set<EventColor>().FirstOrDefault(x => x.Equals(new EventColor(appointment.AppointmentBackground)));
+                var bg = _db.Set<EventColor>()
+                    .FirstOrDefault(x => x.Equals(new EventColor(appointment.AppointmentBackground)));
 
                 var newEvent = new Event
                 {
@@ -261,5 +129,134 @@ public class CalendarViewModel(
     {
         _view  = this;
         Events = GenerateRandomAppointments();
+    }
+
+    private Brush GetAppointmentForeground(Brush backgroundColor)
+    {
+        if (backgroundColor.ToString().Equals("#FF8551F2") || backgroundColor.ToString().Equals("#FF5363FA") ||
+            backgroundColor.ToString().Equals("#FF2D99FF"))
+            return Brushes.White;
+        return new SolidColorBrush(Color.FromRgb(51, 51, 51));
+    }
+
+    private ScheduleAppointmentCollection GenerateRandomAppointments()
+    {
+        var WorkWeekDays = new ObservableCollection<DateTime>();
+        var WorkWeekSubjects = new ObservableCollection<string>
+        {
+            "GoToMeeting", "Business Meeting", "Conference", "Project Status Discussion",
+            "Auditing", "Client Meeting", "Generate Report", "Target Meeting", "General Meeting"
+        };
+
+        var NonWorkingDays = new ObservableCollection<DateTime>();
+        var NonWorkingSubjects = new ObservableCollection<string>
+        {
+            "Go to party", "Order Pizza", "Buy Gift",
+            "Vacation"
+        };
+        var YearlyOccurrance = new ObservableCollection<DateTime>();
+        var YearlyOccurranceSubjects = new ObservableCollection<string>
+            { "Wedding Anniversary", "Sam's Birthday", "Jenny's Birthday" };
+        var MonthlyOccurrance = new ObservableCollection<DateTime>();
+        var MonthlyOccurranceSubjects = new ObservableCollection<string>
+            { "Pay House Rent", "Car Service", "Medical Check Up" };
+        var WeekEndOccurrance = new ObservableCollection<DateTime>();
+        var WeekEndOccurranceSubjects = new ObservableCollection<string> { "FootBall Match", "TV Show" };
+
+        var brush = new ObservableCollection<SolidColorBrush>();
+        brush.Add(new SolidColorBrush(Color.FromRgb(133, 81, 242)));
+        brush.Add(new SolidColorBrush(Color.FromRgb(140, 245, 219)));
+        brush.Add(new SolidColorBrush(Color.FromRgb(83, 99, 250)));
+        brush.Add(new SolidColorBrush(Color.FromRgb(255, 222, 133)));
+        brush.Add(new SolidColorBrush(Color.FromRgb(45, 153, 255)));
+        brush.Add(new SolidColorBrush(Color.FromRgb(253, 183, 165)));
+        brush.Add(new SolidColorBrush(Color.FromRgb(198, 237, 115)));
+        brush.Add(new SolidColorBrush(Color.FromRgb(253, 185, 222)));
+        brush.Add(new SolidColorBrush(Color.FromRgb(255, 222, 133)));
+
+        var ran = new Random();
+        var today = DateTime.Now;
+        if (today.Month == 12)
+            today                        = today.AddMonths(-1);
+        else if (today.Month == 1) today = today.AddMonths(1);
+
+        var startMonth = new DateTime(today.Year, today.Month - 1, 1, 0, 0, 0);
+        var endMonth = new DateTime(today.Year, today.Month + 1, 30, 0, 0, 0);
+        var dt = new DateTime(today.Year, today.Month, 15, 0, 0, 0);
+        var day = (int) startMonth.DayOfWeek;
+        var CurrentStart = startMonth.AddDays(-day);
+
+        var appointments = new ScheduleAppointmentCollection();
+        for (var i = 0; i < 120; i++)
+        {
+            if (i % 7 == 0 || i % 7 == 6)
+            {
+                //add weekend appointments
+                NonWorkingDays.Add(CurrentStart.AddDays(i));
+            }
+            else
+            {
+                //Add Workweek appointment
+                WorkWeekDays.Add(CurrentStart.AddDays(i));
+            }
+        }
+
+        for (var i = 0; i < 120; i++)
+        {
+            var date = WorkWeekDays[ran.Next(0, WorkWeekDays.Count)].AddHours(ran.Next(9, 17));
+            appointments.Add(new ScheduleAppointment
+            {
+                StartTime             = date,
+                EndTime               = date.AddHours(1),
+                AppointmentBackground = brush[i % brush.Count],
+                Foreground            = GetAppointmentForeground(brush[i % brush.Count]),
+                Subject               = WorkWeekSubjects[i % WorkWeekSubjects.Count]
+            });
+        }
+        var j = 0;
+        var k = 0;
+        var l = 0;
+
+        while (j < YearlyOccurranceSubjects.Count)
+        {
+            var date = NonWorkingDays[ran.Next(0, NonWorkingDays.Count)];
+            appointments.Add(new ScheduleAppointment
+            {
+                StartTime             = date,
+                EndTime               = date.AddHours(1),
+                AppointmentBackground = brush[1],
+                Foreground            = GetAppointmentForeground(brush[1]),
+                Subject               = YearlyOccurranceSubjects[j]
+            });
+            j++;
+        }
+        while (k < MonthlyOccurranceSubjects.Count)
+        {
+            var date = NonWorkingDays[ran.Next(0, NonWorkingDays.Count)].AddHours(ran.Next(9, 23));
+            appointments.Add(new ScheduleAppointment
+            {
+                StartTime             = date,
+                EndTime               = date.AddHours(1),
+                AppointmentBackground = brush[k],
+                Foreground            = GetAppointmentForeground(brush[k]),
+                Subject               = MonthlyOccurranceSubjects[k]
+            });
+            k++;
+        }
+        while (l < WeekEndOccurranceSubjects.Count)
+        {
+            var date = NonWorkingDays[ran.Next(0, NonWorkingDays.Count)].AddHours(ran.Next(0, 23));
+            appointments.Add(new ScheduleAppointment
+            {
+                StartTime             = date,
+                EndTime               = date.AddHours(1),
+                AppointmentBackground = brush[l],
+                Foreground            = GetAppointmentForeground(brush[1]),
+                Subject               = WeekEndOccurranceSubjects[l]
+            });
+            l++;
+        }
+
+        return appointments;
     }
 }

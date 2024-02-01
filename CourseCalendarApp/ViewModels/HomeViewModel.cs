@@ -10,7 +10,7 @@ public class HomeViewModel(MainWindowViewModel main) : Screen
     {
         if (screen != Main.LoginPage
             && screen != Main.SettingsPage
-            && screen != Main.EmployeeListPage
+            && screen != Main.UserListPage
             && Main.IsLoggedOut)
             Main.NavigateToItem(Main.LoginPage);
         else

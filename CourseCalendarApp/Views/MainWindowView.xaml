@@ -24,35 +24,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Grid.Row="0" Title="{Binding Title}" Grid.Column="0">
-            <!-- <ui:TitleBar.Header> -->
-            <!--     <modern:SimpleStackPanel Margin="250,0,0,0" Orientation="Horizontal"> -->
-            <!--         <ui:Hyperlink -->
-            <!--             VerticalAlignment="Center" Command="{s:Action NavigateToSettings}" -->
-            <!--             Visibility="{Binding ShowUpdate, Converter={x:Static s:BoolToVisibilityConverter.Instance}}"> -->
-            <!--             New update! -->
-            <!--         </ui:Hyperlink> -->
-            <!--         <ui:AutoSuggestBox -->
-            <!--             MinWidth="200" MaxWidth="250" PlaceholderText="Search..." -->
-            <!--             TextChanged="{s:Action SearchSong}" ItemsSource="{Binding PlaylistView.TrackTitles}" -->
-            <!--             Text="{Binding PlaylistView.FilterText}" /> -->
-            <!--     </modern:SimpleStackPanel> -->
-            <!-- -->
-            <!-- </ui:TitleBar.Header> -->
-            <!-- <ui:TitleBar.Tray> -->
-            <!--     <ui:NotifyIcon FocusOnLeftClick="True" MenuOnRightClick="True" TooltipText="MIDI Player"> -->
-            <!--         <ui:NotifyIcon.Menu> -->
-            <!--             <ContextMenu> -->
-            <!--                 ~1~ ReSharper disable Xaml.RedundantResource @1@ -->
-            <!--                 <ui:MenuItem Command="{s:Action PlayPause, Target=PlaylistView}" Header="Play" -->
-            <!--                              SymbolIcon="Play16" /> -->
-            <!--                 <ui:MenuItem Command="{s:Action Next}" Header="Next" SymbolIcon="Next16" /> -->
-            <!--                 ~1~ ReSharper restore Xaml.RedundantResource @1@ -->
-            <!--             </ContextMenu> -->
-            <!--         </ui:NotifyIcon.Menu> -->
-            <!--     </ui:NotifyIcon> -->
-            <!-- </ui:TitleBar.Tray> -->
-        </ui:TitleBar>
+        <ui:TitleBar Grid.Row="0" Title="{Binding Title}" Grid.Column="0" />
 
         <Grid Grid.Row="1" Margin="0">
             <Grid.ColumnDefinitions>
@@ -108,11 +80,9 @@
 
                     <ui:NavigationItem
                         Content="People" Icon="PeopleList20"
-                        PageType="{x:Type pages:EmployeeListView}"
-                        Tag="{Binding EmployeeListPage}" />
+                        PageType="{x:Type pages:UserListView}"
+                        Tag="{Binding UserListPage}" />
 
-
-                   
 
                 </ui:NavigationStore.Items>
 

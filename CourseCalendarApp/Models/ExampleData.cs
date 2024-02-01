@@ -1,7 +1,4 @@
-﻿using System.Web.Helpers;
-using AutoBogus;
-
-namespace CourseCalendarApp.Models;
+﻿namespace CourseCalendarApp.Models;
 
 public class ExampleData
 {

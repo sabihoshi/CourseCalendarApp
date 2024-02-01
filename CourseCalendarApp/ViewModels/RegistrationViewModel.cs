@@ -20,19 +20,17 @@ public class RegistrationViewModel(
 
     public bool CanInteract { get; set; } = true;
 
-    public User? SelectedManager { get; set; }
-
     public string AccessType { get; set; } = string.Empty;
-
 
     public string Name { get; set; } = string.Empty;
 
-   
     public string Password { get; set; } = string.Empty;
 
     public string Title { get; set; } = string.Empty;
 
     public string Username { get; set; } = string.Empty;
+
+    public User? SelectedManager { get; set; }
 
     public async Task Register()
     {
@@ -59,15 +57,15 @@ public class RegistrationViewModel(
 
         var user = new User
         {
-            Username     = Username,
-            Password     = Crypto.HashPassword(Password),
-            Name = Name
+            Username = Username,
+            Password = Crypto.HashPassword(Password),
+            Name     = Name
         };
 
         db.Users.Add(user);
         await db.SaveChangesAsync();
 
-        main.NavigateToItem(main.EmployeeListPage);
+        main.NavigateToItem(main.UserListPage);
         await snackBar.ShowAsync("Success", "Successfully created user.", SymbolRegular.AddCircle20,
             ControlAppearance.Success);
     }

@@ -4,7 +4,7 @@ using StyletIoC;
 
 namespace CourseCalendarApp.ViewModels;
 
-public class EmployeeListViewModel(IContainer ioc, MainWindowViewModel main) : Screen
+public class UserListViewModel(IContainer ioc, MainWindowViewModel main) : Screen
 {
     private readonly MainWindowViewModel _main = main;
 
@@ -12,7 +12,7 @@ public class EmployeeListViewModel(IContainer ioc, MainWindowViewModel main) : S
 
     public BindableCollection<User> Employees { get; set; } = new();
 
-    public BindableCollection<User> FilteredEmployees =>
+    public BindableCollection<User> FilteredUsers =>
         string.IsNullOrWhiteSpace(FilterText)
             ? Employees
             : new BindableCollection<User>(Employees.Where(x
@@ -45,6 +45,6 @@ public class EmployeeListViewModel(IContainer ioc, MainWindowViewModel main) : S
     {
         var db = ioc.Get<DatabaseContext>();
         Employees = new BindableCollection<User>(db.Users);
-        NotifyOfPropertyChange(() => FilteredEmployees);
+        NotifyOfPropertyChange(() => FilteredUsers);
     }
 }

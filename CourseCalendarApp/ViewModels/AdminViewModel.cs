@@ -18,11 +18,15 @@ public class AdminViewModel : Screen
         _main = main;
 
         UserInfoView = _ioc.Get<PersonalInfoViewModel>();
-        UserListView = _ioc.Get<EmployeeListViewModel>();
+        UserListView = _ioc.Get<UserListViewModel>();
 
         UserListView.EmployeeSelected += (_, _) => OnEmployeeSelected();
         UserListView.ShowDeleteButton =  true;
     }
+
+    public int SelectedIndex { get; set; }
+
+    public PersonalInfoViewModel UserInfoView { get; }
 
     public User SelectedEmployee
     {
@@ -30,11 +34,7 @@ public class AdminViewModel : Screen
         set => UserListView.SelectedEmployee = value;
     }
 
-    public EmployeeListViewModel UserListView { get; }
-
-    public int SelectedIndex { get; set; }
-
-    public PersonalInfoViewModel UserInfoView { get; }
+    public UserListViewModel UserListView { get; }
 
     protected override void OnActivate()
     {
@@ -45,7 +45,7 @@ public class AdminViewModel : Screen
     private void OnEmployeeSelected()
     {
         UserInfoView.User = SelectedEmployee;
-        SelectedIndex         = 1;
+        SelectedIndex     = 1;
 
         UserInfoView.Activate();
     }

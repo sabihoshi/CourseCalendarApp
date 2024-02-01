@@ -58,7 +58,7 @@
             </ui:CardAction>
 
             <ui:CardAction Icon="PeopleList20" IconFilled="True"
-                           Command="{s:Action Navigate}" CommandParameter="{Binding Main.EmployeeListPage}">
+                           Command="{s:Action Navigate}" CommandParameter="{Binding Main.UserListPage}">
                 <modern:SimpleStackPanel Orientation="Vertical">
                     <TextBlock FontWeight="Medium" Text="Users" />
                     <TextBlock FontSize="10" Text="View the list of employees"

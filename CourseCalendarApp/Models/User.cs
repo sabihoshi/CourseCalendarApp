@@ -1,5 +1,4 @@
-﻿
-namespace CourseCalendarApp.Models;
+﻿namespace CourseCalendarApp.Models;
 
 public class User
 {
@@ -7,19 +6,18 @@ public class User
 
     public virtual ICollection<Course>? Courses { get; set; }
 
+    public virtual ICollection<Event>? Events { get; set; }
+
     public virtual Section? Section { get; set; }
 
-    public virtual ICollection<Event>? Events { get; set; }
+    public string AccessType { get; set; } = "User";
 
     public string Name { get; set; } = null!;
 
-    public string Username { get; set; } = null!;
-
     public string Password { get; set; } = null!;
 
-    public string AccessType { get; set; } = "User";
+    public string Username { get; set; } = null!;
 }
-
 
 public class IgnoredEvent
 {
