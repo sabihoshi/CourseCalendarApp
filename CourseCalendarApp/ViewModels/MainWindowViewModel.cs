@@ -58,9 +58,11 @@ public class MainWindowViewModel : Conductor<IScreen>
 
     public PersonalInfoViewModel PersonalInfoPage { get; }
 
+    public Screen ContentDialogContent { get; set; }
+
     public RegistrationViewModel RegistrationPage { get; }
 
-    public Screen FirstPage => CalendarPage;
+    public Screen FirstPage => HomePage;
 
     public SettingsPageViewModel SettingsPage { get; }
 
@@ -76,7 +78,7 @@ public class MainWindowViewModel : Conductor<IScreen>
 
     public async Task Login(User employee)
     {
-        LoggedInUser = employee;
+        LoggedInUser = employee; 
 
         NavigateToItem(HomePage);
         await _snackbar.ShowAsync("Welcome!", $"You have successfully logged in as {LoggedInUser.Name}.",
@@ -93,6 +95,7 @@ public class MainWindowViewModel : Conductor<IScreen>
             SymbolRegular.WeatherMoon20, ControlAppearance.Secondary);
 
         LoggedInUser = null;
+
     }
 
     public void Navigate(INavigation sender, RoutedNavigationEventArgs args)

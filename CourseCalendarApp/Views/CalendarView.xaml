@@ -6,17 +6,41 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:viewModels="clr-namespace:CourseCalendarApp.ViewModels"
     xmlns:s="https://github.com/canton7/Stylet"
+    xmlns:modern="http://schemas.modernwpf.com/2019"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     mc:Ignorable="d"
     d:DesignHeight="450" d:DesignWidth="800"
 
     d:DataContext="{d:DesignInstance Type=viewModels:CalendarViewModel}">
     <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <modern:SimpleStackPanel
+            Visibility="{Binding Main.IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Grid.Row="0" Margin="0,8" Orientation="Horizontal">
+            <Button Command="{s:Action ImportSchedule}">Import COR Schedule</Button>
+            <!--<Button Command="{s:Action ImportCanvas}">Import Canvas Events</Button>-->
+
+            <ui:ToggleSwitch Content="Public Mode" IsChecked="{Binding IsPublicEvent}" />
+            <ComboBox SelectedItem="{Binding SelectedEventType}" SelectedIndex="0">
+                <ComboBoxItem>Event</ComboBoxItem>
+                <ComboBoxItem>Organization Event</ComboBoxItem>
+            </ComboBox>
+        </modern:SimpleStackPanel>
+
         <syncfusion:SfScheduler
+            Grid.Row="1"
             ItemsSource="{Binding Events}"
             AppointmentEditorClosing="{s:Action OnEditorClosed}"
-            syncfusion:SfSkinManager.Theme="{syncfusion:SkinManagerExtension ThemeName=Windows11Dark}"
-            ViewType="Week"
-            AllowedViewTypes="Month,Day,Week,WorkWeek">
+
+            ViewType="Week" AllowedViewTypes="Month,Day,Week,WorkWeek"
+            DisplayDate="{Binding DisplayDate}"
+
+            syncfusion:SfSkinManager.Theme="{syncfusion:SkinManagerExtension ThemeName=Windows11Dark}">
             <syncfusion:SfScheduler.MonthViewSettings>
                 <syncfusion:MonthViewSettings
                     AppointmentDisplayMode="Appointment"
@@ -26,5 +50,24 @@
                 <syncfusion:DaysViewSettings MinimumAppointmentDuration="0:30:0" />
             </syncfusion:SfScheduler.DaysViewSettings>
         </syncfusion:SfScheduler>
+
+        <ui:Dialog x:Name="ImportScheduleDialog"
+                   Grid.Row="0" Grid.RowSpan="2"
+                   DialogWidth="900" DialogHeight="400"
+                   VerticalAlignment="Stretch"
+                   Title="Import COR Schedule" Message="Copy your COR schedule table and paste it here"
+                   ButtonLeftName="Ok" ButtonRightName="Cancel">
+            <modern:SimpleStackPanel Margin="0,8">
+                <ui:TextBox VerticalAlignment="Stretch"
+                            PlaceholderText="Paste COR schedule here"
+                            MinHeight="100"
+                            AcceptsReturn="True" AcceptsTab="True"
+                            Text="{Binding ImportScheduleInput}" />
+
+                <ui:ToggleSwitch IsChecked="{Binding ReplaceCourseSchedule}"
+                                 Content="Force replace existing schedules" />
+            </modern:SimpleStackPanel>
+
+        </ui:Dialog>
     </Grid>
 </UserControl>

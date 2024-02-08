@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿  <UserControl
     x:Class="CourseCalendarApp.Views.HomeView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -18,6 +18,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+
         <modern:SimpleStackPanel Grid.Row="0">
             <ui:CardAction Icon="{Binding Main.LogIcon}" IconFilled="True"
                            Command="{s:Action Navigate}" CommandParameter="{Binding Main.LoginPage}">
@@ -33,17 +34,16 @@
                            Command="{s:Action Navigate}" CommandParameter="{Binding Main.RegistrationPage}">
                 <modern:SimpleStackPanel Orientation="Vertical">
                     <TextBlock FontWeight="Medium" Text="New User" />
-                    <TextBlock FontSize="10" Text="Create a new employee"
+                    <TextBlock FontSize="10" Text="Create a new user"
                                Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
                 </modern:SimpleStackPanel>
             </ui:CardAction>
 
-            <ui:CardAction Icon="BookLetter24" IconFilled="True"
-                           Visibility="{Binding Main.IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}"
-                           Command="{s:Action Navigate}" CommandParameter="{Binding Main.AdminPage}">
+            <ui:CardAction Icon="CalendarRtl12" IconFilled="True"
+                           Command="{s:Action Navigate}" CommandParameter="{Binding Main.CalendarPage}">
                 <modern:SimpleStackPanel Orientation="Vertical">
-                    <TextBlock FontWeight="Medium" Text="Admin Tools" />
-                    <TextBlock FontSize="10" Text="All your administration needs"
+                    <TextBlock FontWeight="Medium" Text="Course Calendar" />
+                    <TextBlock FontSize="10" Text="View your course calendar"
                                Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
                 </modern:SimpleStackPanel>
             </ui:CardAction>
@@ -61,25 +61,17 @@
                            Command="{s:Action Navigate}" CommandParameter="{Binding Main.UserListPage}">
                 <modern:SimpleStackPanel Orientation="Vertical">
                     <TextBlock FontWeight="Medium" Text="Users" />
-                    <TextBlock FontSize="10" Text="View the list of employees"
+                    <TextBlock FontSize="10" Text="View the list of users"
                                Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
                 </modern:SimpleStackPanel>
             </ui:CardAction>
 
-            <ui:CardAction Icon="CalendarRtl12" IconFilled="True"
-                           Command="{s:Action Navigate}" CommandParameter="{Binding Main.AttendancePage}">
+            <ui:CardAction Icon="BookLetter24" IconFilled="True"
+                           Visibility="{Binding Main.IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}"
+                           Command="{s:Action Navigate}" CommandParameter="{Binding Main.AdminPage}">
                 <modern:SimpleStackPanel Orientation="Vertical">
-                    <TextBlock FontWeight="Medium" Text="Attendance Sheet" />
-                    <TextBlock FontSize="10" Text="View your attendance sheet"
-                               Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
-                </modern:SimpleStackPanel>
-            </ui:CardAction>
-
-            <ui:CardAction Icon="NotepadPerson20" IconFilled="True"
-                           Command="{s:Action Navigate}" CommandParameter="{Binding Main.PerformancePage}">
-                <modern:SimpleStackPanel Orientation="Vertical">
-                    <TextBlock FontWeight="Medium" Text="Performance Assessments" />
-                    <TextBlock FontSize="10" Text="View your performance reviews"
+                    <TextBlock FontWeight="Medium" Text="Admin Tools" />
+                    <TextBlock FontSize="10" Text="All your administration needs"
                                Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
                 </modern:SimpleStackPanel>
             </ui:CardAction>
@@ -92,8 +84,8 @@
                                Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
                 </modern:SimpleStackPanel>
             </ui:CardAction>
-
         </modern:SimpleStackPanel>
+     
         <ui:InfoBar Grid.Row="1" Severity="Informational" IsOpen="{Binding Main.IsLoggedOut}"
                     Message="Some items may not be visible until you log in." />
     </Grid>

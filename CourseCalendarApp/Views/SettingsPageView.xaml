@@ -26,6 +26,7 @@
                 <modern:SimpleStackPanel Orientation="Vertical" HorizontalAlignment="Left" MinWidth="300">
                     <ui:TextBox Icon="Person12" PlaceholderText="Username" Text="{Binding Username}" />
                     <ui:PasswordBox Icon="Password16" PlaceholderText="Password" Text="{Binding Password, Mode=TwoWay}" />
+                    <!--<ui:TextBox Icon="Person12" PlaceholderText="Canvas API Key" Text="{Binding Canvas API Key}" />-->
 
                     <modern:SimpleStackPanel Orientation="Horizontal">
                         <ui:Button Width="100" Appearance="Primary" Command="{s:Action Save}">Save</ui:Button>

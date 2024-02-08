@@ -14,7 +14,19 @@ public class PersonalInfoViewModel(
 {
     private User? _user;
 
+    public BindableCollection<string> Organizations { get; set; } = new();
+
+    public BindableCollection<string> Sections { get; set; } = new();
+
     public BindableCollection<User> Users { get; set; } = new();
+
+    public DateTime DateOfBirth
+    {
+        get => User.DateOfBirth?.DateTime ?? DateTime.Now;
+        set => User.DateOfBirth = value;
+    }
+
+    public int Age => DateTime.Now.Year - DateOfBirth.Year - (DateOfBirth.DayOfYear < DateTime.Now.DayOfYear ? 0 : 1);
 
     public User User
     {
@@ -38,8 +50,16 @@ public class PersonalInfoViewModel(
     protected override void OnActivate()
     {
         var db = ioc.Get<DatabaseContext>();
-        _user = db.Users
-            .FirstOrDefault(x => x.Id == User.Id);
+        _user = db.Users.FirstOrDefault(x => x.Id == User.Id);
+
         Users = new BindableCollection<User>(db.Users.Where(x => x.Id != User.Id));
+        Sections = new BindableCollection<string>(db.Users
+            .Select(x => x.Section)
+            .Where(x => x != null)
+            .ToList().Cast<string>().Distinct());
+        Organizations = new BindableCollection<string>(db.Users
+            .Select(x => x.Organization)
+            .Where(x => x != null)
+            .ToList().Cast<string>().Distinct());
     }
 }

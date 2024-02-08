@@ -20,10 +20,10 @@
         <modernWpf:GroupKeyConverter x:Key="GroupKeyConverter" />
         <CollectionViewSource x:Key="CollectionSource" Source="{Binding FilteredUsers}">
             <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="Data.Name" Converter="{StaticResource GroupKeyConverter}" />
+                <PropertyGroupDescription PropertyName="Name" Converter="{StaticResource GroupKeyConverter}" />
             </CollectionViewSource.GroupDescriptions>
             <CollectionViewSource.SortDescriptions>
-                <componentModel:SortDescription PropertyName="Data.Name" />
+                <componentModel:SortDescription PropertyName="Name" />
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
 
@@ -56,7 +56,7 @@
                         Visibility="{Binding DataContext.ShowDeleteButton,
                             RelativeSource={RelativeSource AncestorType={x:Type UserControl}},
                             Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Command="{s:Action DeleteEmployee}" CommandParameter="{Binding}" />
+                        Command="{s:Action DeleteUser}" CommandParameter="{Binding}" />
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -72,7 +72,7 @@
         <Grid Grid.Row="0" Margin="0,5">
             <ui:AutoSuggestBox
                 MinWidth="200" MaxWidth="250" HorizontalAlignment="Left" PlaceholderText="Search..."
-                ItemsSource="{Binding EmployeeNames}"
+                ItemsSource="{Binding UserNames}"
                 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
@@ -90,8 +90,8 @@
             VirtualizingPanel.IsVirtualizingWhenGrouping="True"
             VirtualizingPanel.VirtualizationMode="Recycling"
 
-            SelectionChanged="{s:Action OnEmployeeSelected}"
-            SelectedItem="{Binding SelectedEmployee}">
+            SelectionChanged="{s:Action OnUserSelected}"
+            SelectedItem="{Binding SelectedUser}">
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>

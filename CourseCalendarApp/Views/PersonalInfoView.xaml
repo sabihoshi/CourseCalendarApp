@@ -23,40 +23,35 @@
                 <ui:CardExpander Icon="Person12" Header="Basic Information" IsExpanded="True">
                     <modern:SimpleStackPanel>
                         <modern:SimpleStackPanel Orientation="Horizontal">
-                            <GroupBox Header="User #">
-                                <ui:TextBox Icon="NumberSymbol16" Text="{Binding User.CompanyId}" />
+                            <GroupBox Header="Section">
+                                <ComboBox ItemsSource="{Binding Sections}"
+                                          Text="{Binding User.Section}" IsEditable="True" />
                             </GroupBox>
 
-                            <GroupBox Header="Status ">
-                                <ui:TextBox PlaceholderText="Active" Text="{Binding User.Status}" />
+                            <GroupBox Header="Organization">
+                                <ComboBox ItemsSource="{Binding Organizations}"
+                                          Text="{Binding User.Organization}" IsEditable="True" />
                             </GroupBox>
                         </modern:SimpleStackPanel>
-
-                        <GroupBox Header="Manager">
-                            <ComboBox
-                                ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedManager}"
-                                DisplayMemberPath="Data.Name" />
-                        </GroupBox>
 
                         <modern:SimpleStackPanel Orientation="Horizontal">
                             <GroupBox Header="Full Name">
                                 <modern:SimpleStackPanel Orientation="Horizontal">
                                     <ui:TextBox Icon="BookContacts20" MinWidth="150" PlaceholderText="First"
-                                                Text="{Binding Name}" />
-                                    <ui:TextBox MinWidth="150" PlaceholderText="Middle"
-                                                Text="{Binding MiddleName}" />
-                                    <ui:TextBox MinWidth="150" PlaceholderText="Last"
-                                                Text="{Binding LastName}" />
+                                                Text="{Binding User.Name}" />
                                 </modern:SimpleStackPanel>
                             </GroupBox>
                         </modern:SimpleStackPanel>
 
-                        <modern:SimpleStackPanel Orientation="Horizontal">
-                            <GroupBox Header="Preferred Name">
-                                <ui:TextBox MinWidth="150" PlaceholderText="(Optional)"
-                                            Text="{Binding PreferredName}" />
-                            </GroupBox>
-                        </modern:SimpleStackPanel>
+                        <GroupBox Header="Contact">
+                            <modern:SimpleStackPanel>
+                                <modern:SimpleStackPanel>
+                                    <TextBlock FontSize="11">Email</TextBlock>
+                                    <ui:TextBox Icon="Phone20" PlaceholderText="Email Address"
+                                                Text="{Binding User.Email}" />
+                                </modern:SimpleStackPanel>
+                            </modern:SimpleStackPanel>
+                        </GroupBox>
 
                         <modern:SimpleStackPanel Orientation="Horizontal">
                             <GroupBox Header="Birth Date">
@@ -68,107 +63,34 @@
                                 </modern:SimpleStackPanel>
                             </GroupBox>
                         </modern:SimpleStackPanel>
+                    </modern:SimpleStackPanel>
+                </ui:CardExpander>
 
+                <ui:CardExpander Icon="Person12" Header="Class Details" IsExpanded="True">
+                    <modern:SimpleStackPanel>
                         <modern:SimpleStackPanel Orientation="Horizontal">
-                            <GroupBox Header="Gender">
-                                <ui:TextBox PlaceholderText="Gender" Text="{Binding Gender}" />
-                            </GroupBox>
-                            <GroupBox Header="Marital Status">
-                                <ui:TextBox PlaceholderText="Marital Status"
-                                            Text="{Binding MaritalStatus}" />
+                            <GroupBox Header="Section">
+                                <ui:TextBox Icon="NumberSymbol16" Text="{Binding User.Section}" />
                             </GroupBox>
                         </modern:SimpleStackPanel>
 
-                        <GroupBox Header="Contact">
-                            <modern:SimpleStackPanel>
-                                <modern:SimpleStackPanel>
-                                    <TextBlock FontSize="11">Email</TextBlock>
-                                    <ui:TextBox Icon="Phone20" PlaceholderText="Email Address"
-                                                Text="{Binding EmailAddress}" />
-                                </modern:SimpleStackPanel>
-
+                        <modern:SimpleStackPanel Orientation="Horizontal">
+                            <GroupBox Header="Year">
                                 <modern:SimpleStackPanel Orientation="Horizontal">
-                                    <modern:SimpleStackPanel>
-                                        <TextBlock FontSize="11">Mobile</TextBlock>
-                                        <ui:TextBox Icon="Phone20" PlaceholderText="Phone #"
-                                                    Text="{Binding PhoneNumber}" />
-                                    </modern:SimpleStackPanel>
-
-                                    <modern:SimpleStackPanel>
-                                        <TextBlock FontSize="11">Telephone</TextBlock>
-                                        <ui:TextBox Icon="Building20" PlaceholderText="Telephone #"
-                                                    Text="{Binding TelephoneNumber}" />
-                                    </modern:SimpleStackPanel>
+                                    <ui:NumberBox Icon="BookContacts20" MinWidth="300" PlaceholderText="Year"
+                                                  Minimum="1" Maximum="5" Value="{Binding User.Year}"
+                                                  Text="{Binding User.Year}" />
                                 </modern:SimpleStackPanel>
-                            </modern:SimpleStackPanel>
-                        </GroupBox>
+                            </GroupBox>
 
-                        <GroupBox Header="Government">
-                            <modern:SimpleStackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Grid.Column="0" VerticalAlignment="Center">PhilHealth</TextBlock>
-                                    <ui:TextBox Grid.Column="1" Margin="8,0,0,0" Icon="Doctor20"
-                                                PlaceholderText="PhilHealth #"
-                                                HorizontalAlignment="Stretch"
-                                                Text="{Binding PhilHealth}" />
-                                </Grid>
-
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Grid.Column="0" VerticalAlignment="Center">SSS</TextBlock>
-                                    <ui:TextBox Grid.Column="1" Margin="8,0,0,0" Icon="Doctor20"
-                                                PlaceholderText="SSS #"
-                                                HorizontalAlignment="Stretch"
-                                                Text="{Binding Sss}" />
-                                </Grid>
-
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Grid.Column="0" VerticalAlignment="Center">TIN</TextBlock>
-                                    <ui:TextBox Grid.Column="1" Margin="8,0,0,0" Icon="Doctor20"
-                                                PlaceholderText="TIN #"
-                                                HorizontalAlignment="Stretch"
-                                                Text="{Binding Tin}" />
-                                </Grid>
-                            </modern:SimpleStackPanel>
-                        </GroupBox>
-                    </modern:SimpleStackPanel>
-                </ui:CardExpander>
-
-                <ui:CardExpander Icon="Home16" Header="Address" IsExpanded="True">
-                    <modern:SimpleStackPanel HorizontalAlignment="Left">
-                        <ui:TextBox PlaceholderText="Street" MinWidth="300"
-                                    Text="{Binding Street}" />
-
-                        <modern:SimpleStackPanel Orientation="Horizontal">
-                            <ui:TextBox PlaceholderText="City" TextWrapping="Wrap"
-                                        Text="{Binding City}" />
-                            <ui:TextBox PlaceholderText="State" TextWrapping="Wrap"
-                                        Text="{Binding AddressState}" />
-                            <ui:TextBox PlaceholderText="Zip Code" TextWrapping="Wrap"
-                                        Text="{Binding ZipCode}" />
+                            <GroupBox Header="Term">
+                                <modern:SimpleStackPanel Orientation="Horizontal">
+                                    <ui:NumberBox Icon="BookContacts20" MinWidth="300" PlaceholderText="Semester"
+                                                  Minimum="1" Maximum="3" Value="{Binding User.Term}"
+                                                  Text="{Binding User.Term}" />
+                                </modern:SimpleStackPanel>
+                            </GroupBox>
                         </modern:SimpleStackPanel>
-                    </modern:SimpleStackPanel>
-                </ui:CardExpander>
-                <ui:CardExpander Icon="BriefcaseMedical20" Header="Emergency Contacts" IsExpanded="True">
-                    <modern:SimpleStackPanel Orientation="Vertical" HorizontalAlignment="Left">
-                        <ui:TextBox MinWidth="320" PlaceholderText="Name"
-                                    Text="{Binding ContactName}" />
-                        <ui:TextBox PlaceholderText="Phone #" Text="{Binding ContactNumber}" />
-                        <ui:TextBox PlaceholderText="Relationship" Text="{Binding Relationship}" />
                     </modern:SimpleStackPanel>
                 </ui:CardExpander>
             </modern:SimpleStackPanel>

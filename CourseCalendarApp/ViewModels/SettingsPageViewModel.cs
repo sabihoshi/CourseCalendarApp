@@ -33,8 +33,10 @@ public class SettingsPageViewModel(IContainer ioc, MainWindowViewModel main) : S
     public async Task GenerateFakeData()
     {
         var db = ioc.Get<DatabaseContext>();
-        //db.Users.AddRange(ExampleData.GenerateEmployees(AmountToGenerate));
+        db.Users.AddRange(ExampleData.GenerateUsers(AmountToGenerate));
         await db.SaveChangesAsync();
+
+        main.CalendarPage.GenerateRandomAppointments();
 
         var service = ioc.Get<ISnackbarService>();
         await service.ShowAsync("Success", "Successfully generated fake data.",

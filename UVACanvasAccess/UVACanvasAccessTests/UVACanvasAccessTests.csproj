@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{4A1E3DCE-3AAA-4BCE-9C16-E7897E9C367F}</ProjectGuid>
+        <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>UVACanvasAccessTests</RootNamespace>
+        <AssemblyName>UVACanvasAccessTests</AssemblyName>
+        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <LangVersion>8</LangVersion>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+        <MSBuildWarningsAsMessages>MSB3276</MSBuildWarningsAsMessages>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="mscorlib" />
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Net.Http" />
+        <Reference Include="System.Net.Http.WebRequest" />
+        <Reference Include="System.Numerics" />
+        <Reference Include="System.Xml" />
+        <Reference Include="xunit.runner.tdnet, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c">
+          <HintPath>..\..\..\..\..\.nuget\packages\xunit.extensibility.core\2.4.1\lib\net452\xunit.runner.tdnet.dll</HintPath>
+        </Reference>
+        <Reference Include="xunit.runner.utility.net452, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c">
+          <HintPath>..\..\..\..\..\.nuget\packages\xunit.extensibility.core\2.4.1\lib\net452\xunit.runner.utility.net452.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="ApiFixture.cs" />
+        <Compile Include="AssignmentPerformanceStatisticsReport.cs" />
+        <Compile Include="AssignmentPerformanceStatisticsWithIndividualsReport.cs" />
+        <Compile Include="AssignmentPerformanceStatisticsWithIndividualsReportTabularized.cs" />
+        <Compile Include="AssignmentsTests.cs" />
+        <Compile Include="CurrentAssignmentsReport.cs" />
+        <Compile Include="CurrentAssignmentsReportTabularized.cs" />
+        <Compile Include="DistinctTeacherAdvisoryMessagesReport.cs" />
+        <Compile Include="ExportLoggedInUsers.cs" />
+        <Compile Include="GradeReporting.cs" />
+        <Compile Include="MasterCourseSectionsReport.cs" />
+        <Compile Include="ObserversToObservees.cs" />
+        <Compile Include="ParallelFileMapUpload.cs" />
+        <Compile Include="SingleThreadedFileMapUpload.cs" />
+        <Compile Include="Tests.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="UserCourseActivityReport.cs" />
+        <Compile Include="UserGradeReport.cs" />
+        <Compile Include="UserInteractionReport.cs" />
+        <Compile Include="UserInteractionReportTabularized.cs" />
+        <Compile Include="UserLoginReport.cs" />
+        <Compile Include="UsersTests.cs" />
+        <Compile Include="UserStorageQuotaReport.cs" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\UVACanvasAccess\UVACanvasAccess.csproj">
+            <Project>{1fb84d6a-da03-443f-b358-0b9fa56ec20a}</Project>
+            <Name>UVACanvasAccess</Name>
+        </ProjectReference>
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="dotenv.net" Version="3.1.0" />
+      <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="System.Buffers" Version="4.5.1" />
+      <PackageReference Include="System.Linq.Async" Version="5.0.0" />
+      <PackageReference Include="System.Memory" Version="4.5.4" />
+      <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+      <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
+      <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+      <PackageReference Include="xunit" Version="2.4.1" />
+      <PackageReference Include="xunit.abstractions" Version="2.0.3" />
+      <PackageReference Include="xunit.analyzers" Version="0.10.0" />
+      <PackageReference Include="xunit.assert" Version="2.4.1" />
+      <PackageReference Include="xunit.core" Version="2.4.1" />
+      <PackageReference Include="xunit.extensibility.core" Version="2.4.1" />
+      <PackageReference Include="xunit.extensibility.execution" Version="2.4.1" />
+      <PackageReference Include="xunit.runner.console" Version="2.4.1">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+           Other similar extension points exist, see Microsoft.Common.targets.
+      <Target Name="BeforeBuild">
+      </Target>
+      <Target Name="AfterBuild">
+      </Target>
+      -->
+</Project>

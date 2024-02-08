@@ -1,4 +1,5 @@
-﻿using CourseCalendarApp.Models;
+﻿using System.Web.Helpers;
+using CourseCalendarApp.Models;
 using CourseCalendarApp.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Stylet;
@@ -31,14 +32,15 @@ public class Bootstrapper : Bootstrapper<MainWindowViewModel>
             var db = new DatabaseContext(options);
             db.Database.EnsureCreated();
 
-            //if (db.Users.Any()) return db;
+            if (db.Users.Any()) return db;
 
-            //db.Users.Add(new User
-            //{
-            //    AccessType = "Admin",
-            //    Username   = "admin",
-            //    Password   = Crypto.HashPassword("password")
-            //});
+            db.Users.Add(new User
+            {
+                Name       = "Admin",
+                AccessType = "Admin",
+                Username   = "admin",
+                Password   = Crypto.HashPassword("password")
+            });
 
             db.SaveChanges();
 

@@ -4,13 +4,24 @@ public class Course
 {
     public virtual Advisor? Advisor { get; set; }
 
+    public virtual Event Schedule { get; set; } = null!;
+
     public Guid Id { get; set; }
 
-    public virtual Section Section { get; set; } = null!;
+    public int Units { get; set; }
 
-    public string? CourseCode { get; set; }
+    public string CourseCode { get; set; } = null!;
 
-    public string? Description { get; set; }
+    public string Section { get; set; } = null!;
 
-    public string? Name { get; set; }
+    public string Title { get; set; } = null!;
+}
+
+public class OrganizationEvent
+{
+    public virtual Event Schedule { get; set; } = null!;
+
+    public Guid Id { get; set; }
+
+    public string Organization { get; set; } = null!;
 }

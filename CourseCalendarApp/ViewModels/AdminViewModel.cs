@@ -20,7 +20,7 @@ public class AdminViewModel : Screen
         UserInfoView = _ioc.Get<PersonalInfoViewModel>();
         UserListView = _ioc.Get<UserListViewModel>();
 
-        UserListView.EmployeeSelected += (_, _) => OnEmployeeSelected();
+        UserListView.UserSelected += (_, _) => OnEmployeeSelected();
         UserListView.ShowDeleteButton =  true;
     }
 
@@ -30,8 +30,8 @@ public class AdminViewModel : Screen
 
     public User SelectedEmployee
     {
-        get => UserListView.SelectedEmployee!;
-        set => UserListView.SelectedEmployee = value;
+        get => UserListView.SelectedUser!;
+        set => UserListView.SelectedUser = value;
     }
 
     public UserListViewModel UserListView { get; }

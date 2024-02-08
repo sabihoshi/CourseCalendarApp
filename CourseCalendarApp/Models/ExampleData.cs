@@ -1,28 +1,31 @@
-﻿namespace CourseCalendarApp.Models;
+﻿using System.Web.Helpers;
+using AutoBogus;
+
+namespace CourseCalendarApp.Models;
 
 public class ExampleData
 {
-    //public static List<User> GenerateEmployees(int count)
-    //{
-    //    AutoFaker.Configure(builder =>
-    //    {
-    //        builder
-    //            .WithSkip<Guid>()
-    //            .WithSkip<Guid?>();
-    //    });
+    public static List<User> GenerateUsers(int count)
+    {
+        AutoFaker.Configure(builder =>
+        {
+            builder
+                .WithSkip<Guid>()
+                .WithSkip<Guid?>();
+        });
 
-    //    var employees = new List<User>();
+        var users = new List<User>();
 
-    //    for (var i = 0; i < count; i++)
-    //    {
-    //        var employee = AutoFaker.Generate<User>();
+        for (var i = 0; i < count; i++)
+        {
+            var employee = AutoFaker.Generate<User>();
 
-    //        employee.Password   = Crypto.HashPassword("password");
-    //        employee.AccessType = Random.Shared.Next(0, 2) == 0 ? "User" : "Admin";
+            employee.Password   = Crypto.HashPassword("password");
+            employee.AccessType = Random.Shared.Next(0, 2) == 0 ? "User" : "Admin";
 
-    //        employees.Add(employee);
-    //    }
+            users.Add(employee);
+        }
 
-    //    return employees;
-    //}
+        return users;
+    }
 }

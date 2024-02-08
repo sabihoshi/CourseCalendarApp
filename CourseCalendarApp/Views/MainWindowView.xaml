@@ -48,14 +48,14 @@
                         PageType="{x:Type pages:LoginView}"
                         Tag="{Binding LoginPage}" />
 
-                    <ui:NavigationSeparator />
 
                     <ui:NavigationItem
                         Content="Register" Icon="ClipboardBulletListLtr20"
                         PageType="{x:Type pages:RegistrationView}"
                         Tag="{Binding RegistrationPage}"
-                        Visibility="{Binding IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        Visibility="{Binding IsLoggedOut, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
+                    <ui:NavigationSeparator />
 
                     <ui:NavigationItem
                         Content="Admin" Icon="BookLetter24"
@@ -76,7 +76,7 @@
                         Content="Info" Icon="PersonInfo16"
                         PageType="{x:Type pages:PersonalInfoView}"
                         Tag="{Binding PersonalInfoPage}"
-                        IsEnabled="{Binding IsLoggedIn}" />
+                        Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <ui:NavigationItem
                         Content="People" Icon="PeopleList20"
@@ -115,8 +115,10 @@
                     <modernWpf:AnimatedContentControl Grid.Row="1" Margin="10" s:View.Model="{Binding ActiveItem}" />
                 </Grid>
             </Border>
-
-            <ui:Dialog Grid.Column="1" x:Name="RootContentDialog" />
         </Grid>
+
+        <ui:Dialog Grid.Row="0" Grid.RowSpan="2" x:Name="RootContentDialog">
+            <ContentControl s:View.Model="{Binding ContentDialogContent}" />
+        </ui:Dialog>
     </Grid>
 </ui:UiWindow>

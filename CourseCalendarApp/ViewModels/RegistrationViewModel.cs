@@ -26,9 +26,9 @@ public class RegistrationViewModel(
 
     public string Password { get; set; } = string.Empty;
 
-    public string Title { get; set; } = string.Empty;
-
     public string Username { get; set; } = string.Empty;
+
+    public bool CanChangeAccessType => main.LoggedInUser?.AccessType == "Admin";
 
     public User? SelectedManager { get; set; }
 
@@ -64,6 +64,8 @@ public class RegistrationViewModel(
 
         db.Users.Add(user);
         await db.SaveChangesAsync();
+
+        main.LoggedInUser = user;
 
         main.NavigateToItem(main.UserListPage);
         await snackBar.ShowAsync("Success", "Successfully created user.", SymbolRegular.AddCircle20,
