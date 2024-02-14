@@ -1,4 +1,6 @@
-﻿namespace CourseCalendarApp.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CourseCalendarApp.Models;
 
 public class User
 {

@@ -3,11 +3,13 @@ using CourseCalendarApp.Views;
 using ModernWpf;
 using Stylet;
 using StyletIoC;
+using Syncfusion.SfSkinManager;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Controls.Interfaces;
 using Wpf.Ui.Mvvm.Contracts;
+using Theme = Syncfusion.SfSkinManager.Theme;
 
 namespace CourseCalendarApp.ViewModels;
 
@@ -95,7 +97,6 @@ public class MainWindowViewModel : Conductor<IScreen>
             SymbolRegular.WeatherMoon20, ControlAppearance.Secondary);
 
         LoggedInUser = null;
-
     }
 
     public void Navigate(INavigation sender, RoutedNavigationEventArgs args)
@@ -135,6 +136,18 @@ public class MainWindowViewModel : Conductor<IScreen>
             ThemeType.HighContrast => ApplicationTheme.Dark,
             _                      => ApplicationTheme.Dark
         };
+
+        CalendarPage.CalendarTheme = _theme.GetTheme() switch
+        {
+            ThemeType.Unknown      => "Windows11Dark",
+            ThemeType.Dark         => "Windows11Light",
+            ThemeType.Light        => "Windows11Dark",
+            ThemeType.HighContrast => "Windows11Dark",
+            _                      => "Windows11Dark"
+        };
+
+        if (CalendarPage.CalendarView is not null)
+            SfSkinManager.SetTheme(CalendarPage.CalendarView.Calendar, new Theme() { ThemeName = CalendarPage.CalendarTheme });
 
         SettingsPage.OnThemeChanged();
     }

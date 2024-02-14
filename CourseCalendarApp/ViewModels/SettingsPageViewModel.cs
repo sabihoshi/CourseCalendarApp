@@ -28,6 +28,8 @@ public class SettingsPageViewModel(IContainer ioc, MainWindowViewModel main) : S
 
     public string Username { get; set; } = string.Empty;
 
+    public string CanvasKey { get; set; } = string.Empty;
+
     public static Version ProgramVersion => Assembly.GetExecutingAssembly().GetName().Version!;
 
     public async Task GenerateFakeData()

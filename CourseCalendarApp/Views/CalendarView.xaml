@@ -23,7 +23,7 @@
             Visibility="{Binding Main.IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"
             Grid.Row="0" Margin="0,8" Orientation="Horizontal">
             <Button Command="{s:Action ImportSchedule}">Import COR Schedule</Button>
-            <!--<Button Command="{s:Action ImportCanvas}">Import Canvas Events</Button>-->
+            <Button Command="{s:Action ExportCalendar}">Export Calendar</Button>
 
             <ui:ToggleSwitch Content="Public Mode" IsChecked="{Binding IsPublicEvent}" />
             <ComboBox SelectedItem="{Binding SelectedEventType}" SelectedIndex="0">
@@ -33,7 +33,7 @@
         </modern:SimpleStackPanel>
 
         <syncfusion:SfScheduler
-            Grid.Row="1"
+            Grid.Row="1" x:Name="Calendar"
             ItemsSource="{Binding Events}"
             AppointmentEditorClosing="{s:Action OnEditorClosed}"
 
