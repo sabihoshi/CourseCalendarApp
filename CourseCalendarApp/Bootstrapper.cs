@@ -17,7 +17,7 @@ public class Bootstrapper : Bootstrapper<MainWindowViewModel>
     public Bootstrapper()
     {
         SyncfusionLicenseProvider.RegisterLicense(
-            "Ngo9BigBOggjHTQxAR8/V1NAaF1cXmhIfEx1RHxQdld5ZFRHallYTnNWUj0eQnxTdEFjWHxfcXdWQGBYVkR1XA==");
+            "Ngo9BigBOggjHTQxAR8/V1NBaF5cXmZCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWXxcc3RRQ2NYWExwVkQ=");
     }
 
     protected override void ConfigureIoC(IStyletIoCBuilder builder)
@@ -30,6 +30,7 @@ public class Bootstrapper : Bootstrapper<MainWindowViewModel>
                 .Options;
 
             var db = new DatabaseContext(options);
+
             db.Database.EnsureCreated();
 
             if (db.Users.Any()) return db;

@@ -39,6 +39,7 @@
 
             ViewType="Week" AllowedViewTypes="Month,Day,Week,WorkWeek"
             DisplayDate="{Binding DisplayDate}"
+            EnableReminder="True"
 
             syncfusion:SfSkinManager.Theme="{syncfusion:SkinManagerExtension ThemeName=Windows11Dark}">
             <syncfusion:SfScheduler.MonthViewSettings>

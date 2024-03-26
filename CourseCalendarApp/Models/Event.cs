@@ -1,4 +1,6 @@
-﻿using System.Windows.Media;
+﻿using System.Reflection;
+using System.Windows.Media;
+using Syncfusion.UI.Xaml.Scheduler;
 
 namespace CourseCalendarApp.Models;
 
@@ -14,11 +16,13 @@ public class Event
 
     public DateTimeOffset Start { get; set; }
 
-    public virtual EventColor? BackgroundColor { get; set; }
+    public virtual EventColor BackgroundColor { get; set; } = null!;
 
-    public virtual EventColor? ForegroundColor { get; set; }
+    public virtual EventColor ForegroundColor { get; set; } = null!;
 
     public Guid Id { get; set; }
+
+    public virtual List<EventReminder> Reminders { get; set; } = [];
 
     public string? Description { get; set; }
 
@@ -27,6 +31,40 @@ public class Event
     public string? Title { get; set; }
 
     public virtual User? Creator { get; set; }
+}
+
+public class EventReminder
+{
+
+    public bool IsDismissed { get; set; }
+
+    public Guid Id { get; set; }
+
+    public TimeSpan ReminderTimeInterval { get; set; }
+}
+
+public static class EventReminderExtensions
+{
+    public static EventReminder ToEventReminder(this SchedulerReminder reminder) => new()
+    {
+        ReminderTimeInterval = reminder.ReminderTimeInterval,
+        IsDismissed          = reminder.IsDismissed
+    };
+
+    public static SchedulerReminder ToSchedulerReminder(this EventReminder reminder, ScheduleAppointment appointment)
+    {
+        var ret =  new SchedulerReminder
+        {
+            ReminderTimeInterval = reminder.ReminderTimeInterval,
+            IsDismissed          = reminder.IsDismissed
+        };
+
+        // Set the Appointment property with reflection
+        var appointmentProperty = typeof(SchedulerReminder).GetProperty("Appointment", BindingFlags.NonPublic | BindingFlags.Instance);
+        appointmentProperty?.SetValue(ret, appointment);
+
+        return ret;
+    }
 }
 
 public class EventColor : IEquatable<EventColor>, IEquatable<Brush>

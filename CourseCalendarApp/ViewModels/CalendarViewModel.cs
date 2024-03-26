@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
@@ -12,6 +13,7 @@ using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
+using Microsoft.EntityFrameworkCore;
 using Stylet;
 using StyletIoC;
 using Syncfusion.UI.Xaml.Scheduler;
@@ -30,24 +32,27 @@ public partial class CalendarViewModel(
     MainWindowViewModel main)
     : Screen
 {
-    private readonly DatabaseContext _db = ioc.Get<DatabaseContext>();
-    private readonly EventColor _backgroundColor = new() { Red = 45, Green  = 153, Blue = 255 };
-    private readonly EventColor _foregroundColor = new() { Red = 255, Green = 255, Blue = 255 };
-    private readonly IContainer _ioc = ioc;
     private readonly IDialogService _dialog = dialog;
     private readonly IEventAggregator _events = events;
+    private readonly IContainer _ioc = ioc;
     private readonly ISnackbarService _snackbar = snackbar;
-    public CalendarView CalendarView { get; set; }
+    private readonly EventColor _backgroundColor = new() { Red = 45, Green = 153, Blue = 255 };
+    private readonly DatabaseContext _db = ioc.Get<DatabaseContext>();
+    private readonly EventColor _foregroundColor = new() { Red = 255, Green = 255, Blue = 255 };
 
     public bool IsPublicEvent { get; set; }
 
     public bool ReplaceCourseSchedule { get; set; } = true;
+
+    public CalendarView CalendarView { get; set; }
 
     public DateTime DisplayDate { get; } = DateTime.Now.Date.AddHours(6);
 
     public MainWindowViewModel Main { get; } = main;
 
     public ScheduleAppointmentCollection Events { get; set; } = [];
+
+    public string CalendarTheme { get; set; } = "Windows11Dark";
 
     public string ImportScheduleInput { get; set; } = string.Empty;
 
@@ -69,13 +74,13 @@ public partial class CalendarViewModel(
 
     public IEnumerable<Event> GetEventsByOrganization(string organization)
         => _db.OrganizationEvents
-            .Where(x => x.Organization == organization)
-            .Select(x => x.Schedule);
+           .Where(x => x.Organization == organization)
+           .Select(x => x.Schedule);
 
     public IEnumerable<Event> GetEventsBySection(string section)
         => _db.Courses
-            .Where(x => x.Section == section)
-            .Select(x => x.Schedule);
+           .Where(x => x.Section == section)
+           .Select(x => x.Schedule);
 
     public ScheduleAppointmentCollection GenerateRandomAppointments()
     {
@@ -98,7 +103,7 @@ public partial class CalendarViewModel(
         var MonthlyOccurrance = new ObservableCollection<DateTime>();
         var MonthlyOccurranceSubjects = new ObservableCollection<string>
             { "Pay House Rent", "Car Service", "Medical Check Up" };
-        var WeekEndOccurrance = new ObservableCollection<DateTime>();
+        var WeekEndOccurrance         = new ObservableCollection<DateTime>();
         var WeekEndOccurranceSubjects = new ObservableCollection<string> { "FootBall Match", "TV Show" };
 
         var brush = new ObservableCollection<SolidColorBrush>();
@@ -112,16 +117,16 @@ public partial class CalendarViewModel(
         brush.Add(new SolidColorBrush(Color.FromRgb(253, 185, 222)));
         brush.Add(new SolidColorBrush(Color.FromRgb(255, 222, 133)));
 
-        var ran = new Random();
+        var ran   = new Random();
         var today = DateTime.Now;
         if (today.Month == 12)
             today                        = today.AddMonths(-1);
         else if (today.Month == 1) today = today.AddMonths(1);
 
-        var startMonth = new DateTime(today.Year, today.Month - 1, 1, 0, 0, 0);
-        var endMonth = new DateTime(today.Year, today.Month + 1, 30, 0, 0, 0);
-        var dt = new DateTime(today.Year, today.Month, 15, 0, 0, 0);
-        var day = (int) startMonth.DayOfWeek;
+        var startMonth   = new DateTime(today.Year, today.Month - 1, 1, 0, 0, 0);
+        var endMonth     = new DateTime(today.Year, today.Month + 1, 30, 0, 0, 0);
+        var dt           = new DateTime(today.Year, today.Month, 15, 0, 0, 0);
+        var day          = (int) startMonth.DayOfWeek;
         var CurrentStart = startMonth.AddDays(-day);
 
         var appointments = new ScheduleAppointmentCollection();
@@ -213,7 +218,7 @@ public partial class CalendarViewModel(
             if (Events.Any(x => new Guid((string) x.Id) == e.Id))
                 continue;
 
-            Events.Add(new ScheduleAppointment
+            var appointment = new ScheduleAppointment
             {
                 StartTime             = e.Start.LocalDateTime,
                 EndTime               = e.End.LocalDateTime,
@@ -224,7 +229,12 @@ public partial class CalendarViewModel(
                 RecurrenceRule        = e.RecurrenceRule,
                 Foreground            = e.ForegroundColor?.ToBrush() ?? _foregroundColor.ToBrush(),
                 AppointmentBackground = e.BackgroundColor?.ToBrush() ?? _backgroundColor.ToBrush()
-            });
+            };
+
+            var reminders = e.Reminders.Select(x => x.ToSchedulerReminder(appointment));
+            appointment.Reminders = [new SchedulerReminder { ReminderTimeInterval = TimeSpan.FromMinutes(15) }];
+
+            Events.Add(appointment);
         }
     }
 
@@ -268,26 +278,27 @@ public partial class CalendarViewModel(
             if (!match.Success)
                 return [];
 
-            return [new RecurrencePattern
-            {
-                Frequency = FrequencyType.Weekly,
-                ByDay = match.Groups["day"].Value.Split(",")
-                    .Select(x => new WeekDay(x switch
-                    {
-                        "SU" => DayOfWeek.Sunday,
-                        "MO" => DayOfWeek.Monday,
-                        "TU" => DayOfWeek.Tuesday,
-                        "WE" => DayOfWeek.Wednesday,
-                        "TH" => DayOfWeek.Thursday,
-                        "FR" => DayOfWeek.Friday,
-                        "SA" => DayOfWeek.Saturday,
-                        _    => throw new ArgumentOutOfRangeException(nameof(x), x, null)
-                    })).ToList()
-            }];
+            return
+            [
+                new RecurrencePattern
+                {
+                    Frequency = FrequencyType.Weekly,
+                    ByDay = match.Groups["day"].Value.Split(",")
+                       .Select(x => new WeekDay(x switch
+                        {
+                            "SU" => DayOfWeek.Sunday,
+                            "MO" => DayOfWeek.Monday,
+                            "TU" => DayOfWeek.Tuesday,
+                            "WE" => DayOfWeek.Wednesday,
+                            "TH" => DayOfWeek.Thursday,
+                            "FR" => DayOfWeek.Friday,
+                            "SA" => DayOfWeek.Saturday,
+                            _    => throw new ArgumentOutOfRangeException(nameof(x), x, null)
+                        })).ToList()
+                }
+            ];
         }
     }
-
-    public string CalendarTheme { get; set; } = "Windows11Dark";
 
     // public async void ImportCanvas()
     // {
@@ -321,9 +332,9 @@ public partial class CalendarViewModel(
 
                 if (!string.IsNullOrWhiteSpace(ImportScheduleInput))
                 {
-                    var cor = ParseEvents(ImportScheduleInput);
+                    var cor     = ParseEvents(ImportScheduleInput);
                     var courses = cor.SelectMany(AddCORSchedule).ToList();
-                    var events = courses.Select(x => x.Schedule);
+                    var events  = courses.Select(x => x.Schedule);
 
                     AddEvents(events);
                 }
@@ -343,7 +354,7 @@ public partial class CalendarViewModel(
 
         IEnumerable<Course> AddCORSchedule(CORScheduleItem cor)
         {
-            var days = cor.Days.Split('/', StringSplitOptions.TrimEntries);
+            var days  = cor.Days.Split('/', StringSplitOptions.TrimEntries);
             var times = cor.Time.Split('/', StringSplitOptions.TrimEntries);
             var rooms = cor.Room.Split('/', StringSplitOptions.TrimEntries);
 
@@ -353,7 +364,7 @@ public partial class CalendarViewModel(
                     $"Invalid schedule format. The amount schedule for {cor.Courses} is not consistent.");
             }
 
-            var added = new List<Guid>();
+            var added     = new List<Guid>();
             var schedules = days.Zip(times, rooms);
 
             if (ReplaceCourseSchedule)
@@ -361,11 +372,11 @@ public partial class CalendarViewModel(
             else
             {
                 var course = _db.Set<Course>()
-                    .Where(x => !added.Contains(x.Id))
-                    .Where(x => !x.Schedule.Private
-                        || (x.Schedule.Creator != null && Main.LoggedInUser != null &&
-                            x.Schedule.Creator.Id == Main.LoggedInUser.Id))
-                    .FirstOrDefault(x
+                   .Where(x => !added.Contains(x.Id))
+                   .Where(x => !x.Schedule.Private
+                            || (x.Schedule.Creator != null && Main.LoggedInUser != null &&
+                                x.Schedule.Creator.Id == Main.LoggedInUser.Id))
+                   .FirstOrDefault(x
                         => x.CourseCode == cor.Courses
                         && x.Section == cor.Section);
 
@@ -393,9 +404,9 @@ public partial class CalendarViewModel(
                     _    => throw new InvalidDataException("Invalid day of the week.")
                 };
 
-                var time = timeRange.Split('-', StringSplitOptions.TrimEntries);
+                var time  = timeRange.Split('-', StringSplitOptions.TrimEntries);
                 var start = DateTimeOffset.Parse(time[0]);
-                var end = DateTimeOffset.Parse(time[1]);
+                var end   = DateTimeOffset.Parse(time[1]);
 
                 var schedule = new Event
                 {
@@ -409,7 +420,8 @@ public partial class CalendarViewModel(
                     Id              = Guid.NewGuid(),
                     Description     = $"{cor.Title} - {cor.Section} - {room}",
                     RecurrenceRule  = $"FREQ=WEEKLY;BYDAY={byDay}",
-                    Title           = $"{cor.Courses} {cor.Title}"
+                    Title           = $"{cor.Courses} {cor.Title}",
+                    Reminders       = [new EventReminder { ReminderTimeInterval = TimeSpan.FromMinutes(15) }]
                 };
 
                 var course = _db.Add(new Course
@@ -440,7 +452,7 @@ public partial class CalendarViewModel(
             case AppointmentEditorAction.Add:
             {
                 var appointment = e.Appointment;
-                var newEvent = ToEvent(appointment);
+                var newEvent    = ToEvent(appointment);
 
                 if (main.LoggedInUser is not null)
                 {
@@ -459,16 +471,21 @@ public partial class CalendarViewModel(
             case AppointmentEditorAction.Edit:
             {
                 var appointment = e.Appointment;
-                var newEvent = _db.Events.Find((Guid) appointment.Id);
+                var newEvent = _db.Events
+                   .Include(x => x.Reminders)
+                   .FirstOrDefault(x => x.Id == (Guid) appointment.Id);
 
                 if (newEvent == null) return;
 
-                newEvent.AllDay         = appointment.IsAllDay;
-                newEvent.Description    = appointment.Notes;
-                newEvent.End            = appointment.EndTime;
-                newEvent.Start          = appointment.StartTime;
+                _db.RemoveRange(newEvent.Reminders);
+
+                newEvent.AllDay = appointment.IsAllDay;
+                newEvent.Description = appointment.Notes;
+                newEvent.End = appointment.EndTime;
+                newEvent.Start = appointment.StartTime;
                 newEvent.RecurrenceRule = appointment.RecurrenceRule;
-                newEvent.Title          = appointment.Subject;
+                newEvent.Title = appointment.Subject;
+                newEvent.Reminders = appointment.Reminders.Select(EventReminderExtensions.ToEventReminder).ToList();
 
                 _db.Events.Update(newEvent);
                 _db.SaveChanges();
@@ -477,7 +494,7 @@ public partial class CalendarViewModel(
             case AppointmentEditorAction.Delete:
             {
                 var appointment = e.Appointment;
-                var newEvent = _db.Events.Find((Guid) appointment.Id);
+                var newEvent    = _db.Events.Find((Guid) appointment.Id);
 
                 if (newEvent == null) return;
 
@@ -525,7 +542,7 @@ public partial class CalendarViewModel(
     {
         var fg = _db.Set<EventColor>().FirstOrDefault(x => x.Equals(new EventColor(appointment.Foreground)));
         var bg = _db.Set<EventColor>()
-            .FirstOrDefault(x => x.Equals(new EventColor(appointment.AppointmentBackground)));
+           .FirstOrDefault(x => x.Equals(new EventColor(appointment.AppointmentBackground)));
 
         var newEvent = new Event
         {
@@ -539,7 +556,8 @@ public partial class CalendarViewModel(
             Locked          = false,
             Creator         = Main.LoggedInUser,
             ForegroundColor = new EventColor(appointment.Foreground),
-            BackgroundColor = new EventColor(appointment.AppointmentBackground)
+            BackgroundColor = new EventColor(appointment.AppointmentBackground),
+            Reminders       = appointment.Reminders.Select(EventReminderExtensions.ToEventReminder).ToList()
         };
         return newEvent;
     }
