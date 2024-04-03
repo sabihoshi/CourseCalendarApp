@@ -1,10 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Media;
+using CanvasApi.Client.Courses.Models;
+using CanvasApi.Client.Enrollments.Enums;
+using CourseCalendarApp.Canvas;
 using CourseCalendarApp.Models;
 using CourseCalendarApp.Views;
 using CsvHelper;
@@ -50,13 +53,19 @@ public partial class CalendarViewModel(
 
     public MainWindowViewModel Main { get; } = main;
 
+    public ObservableCollection<CourseFilterViewModel> CanvasCourses { get; set; } = new();
+
     public ScheduleAppointmentCollection Events { get; set; } = [];
 
     public string CalendarTheme { get; set; } = "Windows11Dark";
 
-    public string ImportScheduleInput { get; set; } = string.Empty;
+    public string ImportCanvasScheduleInput { get; set; }
+
+    public string ImportCORScheduleInput { get; set; } = string.Empty;
 
     public string SelectedEventType { get; set; } = "Event";
+
+    public bool IsDuplicate(Event e) => Events.Any(x => x.Id == e.Id.ToString());
 
     public IEnumerable<CORScheduleItem> ParseEvents(string text)
     {
@@ -211,92 +220,37 @@ public partial class CalendarViewModel(
         return appointments;
     }
 
-    public void AddEvents(IEnumerable<Event> events)
+    public async Task ImportCanvasSchedule()
     {
-        foreach (var e in events)
+        var pressed = await CalendarView.ImportCanvasScheduleDialog.ShowAndWaitAsync(true);
+
+        switch (pressed)
         {
-            if (Events.Any(x => new Guid((string) x.Id) == e.Id))
-                continue;
-
-            var appointment = new ScheduleAppointment
-            {
-                StartTime             = e.Start.LocalDateTime,
-                EndTime               = e.End.LocalDateTime,
-                Subject               = e.Title,
-                Notes                 = e.Description,
-                Id                    = e.Id.ToString(),
-                IsAllDay              = e.AllDay,
-                RecurrenceRule        = e.RecurrenceRule,
-                Foreground            = e.ForegroundColor?.ToBrush() ?? _foregroundColor.ToBrush(),
-                AppointmentBackground = e.BackgroundColor?.ToBrush() ?? _backgroundColor.ToBrush()
-            };
-
-            var reminders = e.Reminders.Select(x => x.ToSchedulerReminder(appointment));
-            appointment.Reminders = [new SchedulerReminder { ReminderTimeInterval = TimeSpan.FromMinutes(15) }];
-
-            Events.Add(appointment);
-        }
-    }
-
-    public void ExportCalendar()
-    {
-        var calendar = new Calendar();
-        var events = Events.Select(x =>
-            new CalendarEvent
-            {
-                //Uid             = (string) x.Id,
-                Name            = x.Subject,
-                Summary         = x.Notes,
-                Location        = x.Location,
-                IsAllDay        = x.IsAllDay,
-                Start           = new CalDateTime(x.StartTime),
-                End             = new CalDateTime(x.EndTime),
-                RecurrenceRules = ToRecurrencePattern(x.RecurrenceRule)
-            }).ToList();
-
-        foreach (var e in events)
-        {
-            calendar.Events.Add(e);
-        }
-
-        var serializer = new CalendarSerializer();
-        var icalString = serializer.SerializeToString(calendar);
-
-        File.WriteAllText("calendar.ics", icalString);
-
-        _snackbar.ShowAsync("Calendar Export", "Calendar exported successfully", SymbolRegular.Calendar16,
-            ControlAppearance.Success);
-
-        RecurrencePattern[] ToRecurrencePattern(string pattern)
-        {
-            if (string.IsNullOrWhiteSpace(pattern))
-                return [];
-
-            var regex = new Regex("BYDAY=(?<day>[^;]+)");
-            var match = regex.Match(pattern);
-
-            if (!match.Success)
-                return [];
-
-            return
-            [
-                new RecurrencePattern
+            case IDialogControl.ButtonPressed.None:
+                break;
+            case IDialogControl.ButtonPressed.Left:
+                if (!string.IsNullOrWhiteSpace(ImportCanvasScheduleInput))
                 {
-                    Frequency = FrequencyType.Weekly,
-                    ByDay = match.Groups["day"].Value.Split(",")
-                       .Select(x => new WeekDay(x switch
-                        {
-                            "SU" => DayOfWeek.Sunday,
-                            "MO" => DayOfWeek.Monday,
-                            "TU" => DayOfWeek.Tuesday,
-                            "WE" => DayOfWeek.Wednesday,
-                            "TH" => DayOfWeek.Thursday,
-                            "FR" => DayOfWeek.Friday,
-                            "SA" => DayOfWeek.Saturday,
-                            _    => throw new ArgumentOutOfRangeException(nameof(x), x, null)
-                        })).ToList()
+                    var courses = CanvasCourses.Where(x => x.IsSelected);
+                    var calendars = await courses
+                       .ToAsyncEnumerable()
+                       .SelectAwait(async x => await CanvasUtilities.GetCourseCalendarAsync(x.Course))
+                       .ToListAsync();
+                    var events = calendars.SelectMany(x => x.Events).Select(ToEvent).ToList();
+
+                    _db.Events.AddRange(events);
+                    
+                    AddEvents(events);
                 }
-            ];
+
+                CalendarView.ImportCanvasScheduleDialog.Hide();
+                break;
+            case IDialogControl.ButtonPressed.Right:
+                CalendarView.ImportCanvasScheduleDialog.Hide();
+                ImportCanvasScheduleInput = string.Empty;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 
@@ -320,9 +274,9 @@ public partial class CalendarViewModel(
     //     }
     // }
 
-    public async void ImportSchedule()
+    public async Task ImportCORSchedule()
     {
-        var pressed = await CalendarView.ImportScheduleDialog.ShowAndWaitAsync(true);
+        var pressed = await CalendarView.ImportCORScheduleDialog.ShowAndWaitAsync(true);
 
         switch (pressed)
         {
@@ -330,21 +284,20 @@ public partial class CalendarViewModel(
                 break;
             case IDialogControl.ButtonPressed.Left:
 
-                if (!string.IsNullOrWhiteSpace(ImportScheduleInput))
+                if (!string.IsNullOrWhiteSpace(ImportCORScheduleInput))
                 {
-                    var cor     = ParseEvents(ImportScheduleInput);
+                    var cor     = ParseEvents(ImportCORScheduleInput);
                     var courses = cor.SelectMany(AddCORSchedule).ToList();
-                    var events  = courses.Select(x => x.Schedule);
-
+                    var events  = courses.Select(x => x.Schedule).ToList();
+                    
                     AddEvents(events);
                 }
 
-                CalendarView.ImportScheduleDialog.Hide();
-                ImportScheduleInput = string.Empty;
+                CalendarView.ImportCORScheduleDialog.Hide();
                 break;
             case IDialogControl.ButtonPressed.Right:
-                CalendarView.ImportScheduleDialog.Hide();
-                ImportScheduleInput = string.Empty;
+                CalendarView.ImportCORScheduleDialog.Hide();
+                ImportCORScheduleInput = string.Empty;
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -445,6 +398,95 @@ public partial class CalendarViewModel(
         }
     }
 
+    public void AddEvents(IEnumerable<Event> events)
+    {
+        foreach (var e in events)
+        {
+            if (Events.Any(x => new Guid((string) x.Id) == e.Id))
+                continue;
+
+            var appointment = new ScheduleAppointment
+            {
+                StartTime             = e.Start.LocalDateTime,
+                EndTime               = e.End.LocalDateTime,
+                Subject               = e.Title,
+                Notes                 = e.Description,
+                Id                    = e.Id.ToString(),
+                IsAllDay              = e.AllDay,
+                RecurrenceRule        = e.RecurrenceRule,
+                Foreground            = e.ForegroundColor?.ToBrush() ?? _foregroundColor.ToBrush(),
+                AppointmentBackground = e.BackgroundColor?.ToBrush() ?? _backgroundColor.ToBrush()
+            };
+
+            var reminders = e.Reminders.Select(x => x.ToSchedulerReminder(appointment));
+            appointment.Reminders = [new SchedulerReminder { ReminderTimeInterval = TimeSpan.FromMinutes(15) }];
+
+            Events.Add(appointment);
+        }
+    }
+
+    public void ExportCalendar()
+    {
+        var calendar = new Calendar();
+        var events = Events.Select(x =>
+            new CalendarEvent
+            {
+                //Uid             = (string) x.Id,
+                Name            = x.Subject,
+                Summary         = x.Notes,
+                Location        = x.Location,
+                IsAllDay        = x.IsAllDay,
+                Start           = new CalDateTime(x.StartTime),
+                End             = new CalDateTime(x.EndTime),
+                RecurrenceRules = ToRecurrencePattern(x.RecurrenceRule)
+            }).ToList();
+
+        foreach (var e in events)
+        {
+            calendar.Events.Add(e);
+        }
+
+        var serializer = new CalendarSerializer();
+        var icalString = serializer.SerializeToString(calendar);
+
+        File.WriteAllText("calendar.ics", icalString);
+
+        _snackbar.ShowAsync("Calendar Export", "Calendar exported successfully", SymbolRegular.Calendar16,
+            ControlAppearance.Success);
+
+        RecurrencePattern[] ToRecurrencePattern(string pattern)
+        {
+            if (string.IsNullOrWhiteSpace(pattern))
+                return [];
+
+            var regex = new Regex("BYDAY=(?<day>[^;]+)");
+            var match = regex.Match(pattern);
+
+            if (!match.Success)
+                return [];
+
+            return
+            [
+                new RecurrencePattern
+                {
+                    Frequency = FrequencyType.Weekly,
+                    ByDay = match.Groups["day"].Value.Split(",")
+                       .Select(x => new WeekDay(x switch
+                        {
+                            "SU" => DayOfWeek.Sunday,
+                            "MO" => DayOfWeek.Monday,
+                            "TU" => DayOfWeek.Tuesday,
+                            "WE" => DayOfWeek.Wednesday,
+                            "TH" => DayOfWeek.Thursday,
+                            "FR" => DayOfWeek.Friday,
+                            "SA" => DayOfWeek.Saturday,
+                            _    => throw new ArgumentOutOfRangeException(nameof(x), x, null)
+                        })).ToList()
+                }
+            ];
+        }
+    }
+
     public void OnEditorClosed(SfScheduler? sender, AppointmentEditorClosingEventArgs e)
     {
         switch (e.Action)
@@ -510,6 +552,30 @@ public partial class CalendarViewModel(
         }
     }
 
+    public async void OnImportCanvasScheduleInputChanged()
+    {
+        if (string.IsNullOrWhiteSpace(ImportCanvasScheduleInput)) return;
+
+        using var client = CanvasUtilities.CreateClient(ImportCanvasScheduleInput);
+
+        try
+        {
+            var courses = await client.Courses
+               .List(x => x.EnrollmentState = EnrollmentState.Active)
+               .ConfigureAwait(false);
+            var models = courses.Select(x => new CourseFilterViewModel(x));
+            CanvasCourses = new ObservableCollection<CourseFilterViewModel>(models);
+        }
+        catch (Exception e)
+        {
+            _ = Application.Current.Dispatcher.Invoke(async () =>
+            {
+                await _snackbar.ShowAsync("Invalid API Key", e.Message, SymbolRegular.ErrorCircle20,
+                    ControlAppearance.Caution);
+            });
+        }
+    }
+
     protected override void OnViewLoaded()
     {
         CalendarView = (CalendarView) View;
@@ -530,6 +596,21 @@ public partial class CalendarViewModel(
         AddEvents(_db.Events.Where(x => !x.Private));
     }
 
+    private bool IsEqual(ScheduleAppointment x, Event y)
+    {
+        if (x.Id is null) return false;
+        if (new Guid((string) x.Id) == y.Id) return true;
+
+        return x.Subject == y.Title
+            && x.Notes == y.Description
+            && x.StartTime == y.Start
+            && x.EndTime == y.End
+            && x.IsAllDay == y.AllDay
+            && x.RecurrenceRule == y.RecurrenceRule;
+    }
+
+    private bool IsEqual(CalendarEvent x, Event y) => x.Uid == y.CanvasId;
+
     private Brush GetAppointmentForeground(Brush backgroundColor)
     {
         if (backgroundColor.ToString().Equals("#FF8551F2") || backgroundColor.ToString().Equals("#FF5363FA") ||
@@ -538,13 +619,30 @@ public partial class CalendarViewModel(
         return new SolidColorBrush(Color.FromRgb(51, 51, 51));
     }
 
+    private Event ToEvent(CalendarEvent calendarEvent) => new()
+    {
+        AllDay          = calendarEvent.IsAllDay,
+        Description     = calendarEvent.Url.ToString(),
+        Start           = calendarEvent.Start.Value,
+        End             = calendarEvent.End?.Value ?? calendarEvent.Start.Value,
+        RecurrenceRule  = calendarEvent.RecurrenceRules?.FirstOrDefault()?.ToString(),
+        Title           = calendarEvent.Summary,
+        Private         = true,
+        Locked          = true,
+        Creator         = Main.LoggedInUser,
+        ForegroundColor = new EventColor { Red = 255, Green = 255, Blue = 255 },
+        BackgroundColor = new EventColor { Red = 45, Green  = 153, Blue = 255 },
+        Reminders       = [new EventReminder { ReminderTimeInterval = TimeSpan.FromMinutes(15) }]
+    };
+
     private Event ToEvent(ScheduleAppointment appointment)
     {
-        var fg = _db.Set<EventColor>().FirstOrDefault(x => x.Equals(new EventColor(appointment.Foreground)));
+        var fg = _db.Set<EventColor>()
+           .FirstOrDefault(x => x.Equals(new EventColor(appointment.Foreground)));
         var bg = _db.Set<EventColor>()
            .FirstOrDefault(x => x.Equals(new EventColor(appointment.AppointmentBackground)));
 
-        var newEvent = new Event
+        return new Event
         {
             AllDay          = appointment.IsAllDay,
             Description     = appointment.Notes,
@@ -559,11 +657,23 @@ public partial class CalendarViewModel(
             BackgroundColor = new EventColor(appointment.AppointmentBackground),
             Reminders       = appointment.Reminders.Select(EventReminderExtensions.ToEventReminder).ToList()
         };
-        return newEvent;
     }
 
     [GeneratedRegex("Courses\tTitle\tSection\tUnits\tDays\tTime\tRoom")]
     private static partial Regex CORScheduleHeaderRegex();
+
+    public class CourseFilterViewModel(ICourse course)
+    {
+        public bool IsSelected { get; init; } = true;
+
+        public ICourse Course { get; init; } = course;
+
+        // Let's generate the acronym for the course name
+        public string CourseNameAcronym => string
+           .Join("", course.Name.Split(' ')
+               .Select(x => x.FirstOrDefault(char.IsLetter)))
+           .ToUpper();
+    }
 
     public record CORScheduleItem(
         string Courses,

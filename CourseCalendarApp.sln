@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34518.117
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseCalendarApp", "CourseCalendarApp\CourseCalendarApp.csproj", "{118048BD-8CB3-4359-A974-241822F43E60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UVACanvasAccess", "UVACanvasAccess\UVACanvasAccess\UVACanvasAccess.csproj", "{1FB84D6A-DA03-443F-B358-0B9FA56EC20A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CanvasApi.Client", "CanvasApi\CanvasApi.Client\CanvasApi.Client.csproj", "{523B382D-7A2A-46D5-AFFF-567BE7B9D230}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{118048BD-8CB3-4359-A974-241822F43E60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{118048BD-8CB3-4359-A974-241822F43E60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{118048BD-8CB3-4359-A974-241822F43E60}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1FB84D6A-DA03-443F-B358-0B9FA56EC20A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1FB84D6A-DA03-443F-B358-0B9FA56EC20A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1FB84D6A-DA03-443F-B358-0B9FA56EC20A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1FB84D6A-DA03-443F-B358-0B9FA56EC20A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{523B382D-7A2A-46D5-AFFF-567BE7B9D230}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{523B382D-7A2A-46D5-AFFF-567BE7B9D230}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{523B382D-7A2A-46D5-AFFF-567BE7B9D230}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{523B382D-7A2A-46D5-AFFF-567BE7B9D230}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -22,10 +22,12 @@
         <modern:SimpleStackPanel
             Visibility="{Binding Main.IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"
             Grid.Row="0" Margin="0,8" Orientation="Horizontal">
-            <Button Command="{s:Action ImportSchedule}">Import COR Schedule</Button>
+            <Button Command="{s:Action ImportCORSchedule}">Import COR Schedule</Button>
+            <Button Command="{s:Action ImportCanvasSchedule}">Import Canvas Schedule</Button>
             <Button Command="{s:Action ExportCalendar}">Export Calendar</Button>
 
             <ui:ToggleSwitch Content="Public Mode" IsChecked="{Binding IsPublicEvent}" />
+
             <ComboBox SelectedItem="{Binding SelectedEventType}" SelectedIndex="0">
                 <ComboBoxItem>Event</ComboBoxItem>
                 <ComboBoxItem>Organization Event</ComboBoxItem>
@@ -52,23 +54,85 @@
             </syncfusion:SfScheduler.DaysViewSettings>
         </syncfusion:SfScheduler>
 
-        <ui:Dialog x:Name="ImportScheduleDialog"
+        <ui:Dialog x:Name="ImportCORScheduleDialog"
                    Grid.Row="0" Grid.RowSpan="2"
                    DialogWidth="900" DialogHeight="400"
                    VerticalAlignment="Stretch"
                    Title="Import COR Schedule" Message="Copy your COR schedule table and paste it here"
-                   ButtonLeftName="Ok" ButtonRightName="Cancel">
+                   ButtonLeftName="Import Schedule" ButtonRightName="Cancel">
             <modern:SimpleStackPanel Margin="0,8">
                 <ui:TextBox VerticalAlignment="Stretch"
                             PlaceholderText="Paste COR schedule here"
                             MinHeight="100"
                             AcceptsReturn="True" AcceptsTab="True"
-                            Text="{Binding ImportScheduleInput}" />
+                            Text="{Binding ImportCORScheduleInput}" />
 
                 <ui:ToggleSwitch IsChecked="{Binding ReplaceCourseSchedule}"
                                  Content="Force replace existing schedules" />
             </modern:SimpleStackPanel>
 
+        </ui:Dialog>
+
+        <ui:Dialog x:Name="ImportCanvasScheduleDialog"
+                   Grid.Row="0" Grid.RowSpan="2"
+                   DialogWidth="1200" DialogHeight="600"
+                   VerticalAlignment="Stretch"
+                   Title="Import Canvas Schedule" Message="Create an API key in your Canvas settings and paste it here"
+                   ButtonLeftName="Import Schedules" ButtonRightName="Cancel">
+            <modern:SimpleStackPanel Margin="0,8">
+                <ui:TextBox VerticalAlignment="Stretch"
+                            PlaceholderText="Canvas API Key"
+                            Text="{Binding ImportCanvasScheduleInput, UpdateSourceTrigger=PropertyChanged}" />
+                <ListView ItemsSource="{Binding CanvasCourses}"
+                          VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="8,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Ellipse
+                                    Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
+                                    Width="32" Height="32" Margin="6"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Fill="{ui:ThemeResource ControlStrongStrokeColorDefaultBrush}">
+                                </Ellipse>
+
+                                <Label
+                                    Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
+                                    Width="32" Height="32" Margin="6"
+                                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                    
+                                    Content="{Binding CourseNameAcronym}" />
+
+                                <TextBlock
+                                    Grid.Row="0" Grid.Column="1"
+                                    Margin="12,6,0,0"
+                                    FontWeight="Bold" Text="{Binding Course.Name, Mode=OneWay}" />
+
+                                <TextBlock
+                                    Grid.Row="1" Grid.Column="1"
+                                    Margin="12,0,0,6"
+                                    FontSize="11" Text="{Binding Course.CourseCode, Mode=OneWay}" />
+
+                                <ui:ToggleSwitch
+                                    Grid.Row="0"
+                                    Grid.RowSpan="2" Grid.Column="2"
+                                    IsChecked="{Binding IsSelected}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </modern:SimpleStackPanel>
         </ui:Dialog>
     </Grid>
 </UserControl>

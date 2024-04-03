@@ -8,6 +8,8 @@ public class Event
 {
     public bool AllDay { get; set; }
 
+    public string? CanvasId { get; set; }
+
     public bool Locked { get; set; }
 
     public bool Private { get; set; }
