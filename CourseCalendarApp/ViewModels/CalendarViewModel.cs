@@ -643,6 +643,8 @@ public partial class CalendarViewModel(
             if (!string.IsNullOrWhiteSpace(Main.LoggedInUser.Organization))
                 AddEvents(GetEventsByOrganization(Main.LoggedInUser.Organization));
 
+            ImportCanvasScheduleInput = Main.LoggedInUser.CanvasToken ?? string.Empty;
+
             AddEvents(Main.LoggedInUser.Events);
         }
 
