@@ -29,6 +29,7 @@
                 </modern:SimpleStackPanel>
             </GroupBox>
 
+            <ui:TextBox Icon="Mail12" MinWidth="300" PlaceholderText="Email" Text="{Binding Email, Mode=OneWayToSource}" />
             <ui:TextBox Icon="Person12" MinWidth="300" PlaceholderText="Username" Text="{Binding Username, Mode=OneWayToSource}" />
             <ui:PasswordBox
                 Icon="Password16" MinWidth="300" PlaceholderText="Password"

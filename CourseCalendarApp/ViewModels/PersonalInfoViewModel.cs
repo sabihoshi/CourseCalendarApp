@@ -26,7 +26,7 @@ public class PersonalInfoViewModel(
         set => User.DateOfBirth = value;
     }
 
-    public int Age => DateTime.Now.Year - DateOfBirth.Year - (DateOfBirth.DayOfYear < DateTime.Now.DayOfYear ? 0 : 1);
+    public int Age => Math.Min(DateTime.Now.Year - DateOfBirth.Year - (DateOfBirth.DayOfYear < DateTime.Now.DayOfYear ? 0 : 1), 0);
 
     public User User
     {
@@ -50,7 +50,6 @@ public class PersonalInfoViewModel(
     protected override void OnActivate()
     {
         var db = ioc.Get<DatabaseContext>();
-        _user = db.Users.FirstOrDefault(x => x.Id == User.Id);
 
         Users = new BindableCollection<User>(db.Users.Where(x => x.Id != User.Id));
         Sections = new BindableCollection<string>(db.Users

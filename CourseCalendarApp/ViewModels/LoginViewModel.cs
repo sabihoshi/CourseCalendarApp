@@ -33,13 +33,13 @@ public class LoginViewModel(
 
         var db = ioc.Get<DatabaseContext>();
 
-        var employee = await db.Users.FirstOrDefaultAsync(x => x.Username == Username);
-        if (employee == null) return;
+        var user = await db.Users.FirstOrDefaultAsync(x => x.Username == Username);
+        if (user == null) return;
 
-        if (Crypto.VerifyHashedPassword(employee.Password, Password))
+        if (Crypto.VerifyHashedPassword(user.Password, Password))
         {
             LoginError = false;
-            main.Login(employee);
+            await main.LoginAsync(user);
         }
     }
 

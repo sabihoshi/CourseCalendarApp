@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Web.Helpers;
 using CourseCalendarApp.Models;
 using CourseCalendarApp.ModernWPF;
 using ModernWpf;
@@ -24,11 +25,12 @@ public class SettingsPageViewModel(IContainer ioc, MainWindowViewModel main) : S
 
     public int AmountToGenerate { get; set; }
 
+    public string CanvasKey { get; set; } = string.Empty;
+
     public string Password { get; set; } = string.Empty;
 
     public string Username { get; set; } = string.Empty;
 
-    public string CanvasKey { get; set; } = string.Empty;
 
     public static Version ProgramVersion => Assembly.GetExecutingAssembly().GetName().Version!;
 
@@ -49,8 +51,8 @@ public class SettingsPageViewModel(IContainer ioc, MainWindowViewModel main) : S
     {
         if (main.LoggedInUser is null) return;
 
-        await using var db = ioc.Get<DatabaseContext>();
-        var snackBar = ioc.Get<ISnackbarService>();
+        await using var db       = ioc.Get<DatabaseContext>();
+        var             snackBar = ioc.Get<ISnackbarService>();
 
         if (string.IsNullOrWhiteSpace(Username))
         {
@@ -71,7 +73,11 @@ public class SettingsPageViewModel(IContainer ioc, MainWindowViewModel main) : S
         }
 
         main.LoggedInUser.Username = Username;
-        main.LoggedInUser.Password = Password;
+
+        if (!string.IsNullOrWhiteSpace(Password))
+            main.LoggedInUser.Password = Crypto.HashPassword(Password);
+
+        main.LoggedInUser.CanvasToken = CanvasKey;
 
         db.Update(main.LoggedInUser);
         await db.SaveChangesAsync();
@@ -82,8 +88,9 @@ public class SettingsPageViewModel(IContainer ioc, MainWindowViewModel main) : S
 
     public void Clear()
     {
-        Username = string.Empty;
-        Password = string.Empty;
+        Username  = string.Empty;
+        Password  = string.Empty;
+        CanvasKey = string.Empty;
     }
 
     public void OnThemeChanged() => _theme.SetTheme(ThemeManager.Current.ApplicationTheme switch
@@ -93,5 +100,9 @@ public class SettingsPageViewModel(IContainer ioc, MainWindowViewModel main) : S
         _                      => _theme.GetSystemTheme()
     });
 
-    protected override void OnActivate() => Username = main.LoggedInUser?.Username ?? string.Empty;
+    protected override void OnActivate()
+    {
+        Username  = main.LoggedInUser?.Username ?? string.Empty;
+        CanvasKey = main.LoggedInUser?.CanvasToken ?? string.Empty;
+    }
 }

@@ -1,5 +1,4 @@
-﻿using System.Net.Http;
-using System.Web.Helpers;
+﻿using System.Web.Helpers;
 using CourseCalendarApp.Models;
 using CourseCalendarApp.ViewModels;
 using Microsoft.EntityFrameworkCore;
@@ -26,9 +25,9 @@ public class Bootstrapper : Bootstrapper<MainWindowViewModel>
         builder.Bind<DatabaseContext>().ToFactory(_ =>
         {
             var options = new DbContextOptionsBuilder<DatabaseContext>()
-                .UseLazyLoadingProxies()
-                .UseSqlite("Data Source=course_calendar.db")
-                .Options;
+               .UseLazyLoadingProxies()
+               .UseSqlite("Data Source=course_calendar.db")
+               .Options;
 
             var db = new DatabaseContext(options);
 
@@ -38,10 +37,12 @@ public class Bootstrapper : Bootstrapper<MainWindowViewModel>
 
             db.Users.Add(new User
             {
-                Name       = "Admin",
-                AccessType = "Admin",
-                Username   = "admin",
-                Password   = Crypto.HashPassword("password")
+                CanvasToken = "9822~oENjkeVuxfNMRP3kdsJtQXRRPhNeyCKWkvL9VMCwaRaFM8RHzepHGQi1FsEWJhqc",
+                Email       = "202110577@fit.edu.ph",
+                Name        = "Admin",
+                AccessType  = "Admin",
+                Username    = "admin",
+                Password    = Crypto.HashPassword("password")
             });
 
             db.SaveChanges();

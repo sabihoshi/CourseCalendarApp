@@ -18,9 +18,13 @@ public class RegistrationViewModel(
 
     public BindableCollection<User> Users => new(db.Users);
 
+    public bool CanChangeAccessType => main.LoggedInUser?.AccessType == "Admin";
+
     public bool CanInteract { get; set; } = true;
 
     public string AccessType { get; set; } = string.Empty;
+
+    public string Email { get; set; } = string.Empty;
 
     public string Name { get; set; } = string.Empty;
 
@@ -28,12 +32,17 @@ public class RegistrationViewModel(
 
     public string Username { get; set; } = string.Empty;
 
-    public bool CanChangeAccessType => main.LoggedInUser?.AccessType == "Admin";
-
     public User? SelectedManager { get; set; }
 
     public async Task Register()
     {
+        if (string.IsNullOrWhiteSpace(Email))
+        {
+            await snackBar.ShowAsync("Error!", "Please provide an email.", SymbolRegular.Mail12,
+                ControlAppearance.Caution);
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(Username))
         {
             await snackBar.ShowAsync("Error!", "Please provide a username.", SymbolRegular.Person12,
@@ -57,6 +66,7 @@ public class RegistrationViewModel(
 
         var user = new User
         {
+            Email    = Email,
             Username = Username,
             Password = Crypto.HashPassword(Password),
             Name     = Name

@@ -78,7 +78,7 @@ public class MainWindowViewModel : Conductor<IScreen>
 
     public UserListViewModel UserListPage { get; }
 
-    public async Task Login(User employee)
+    public async Task LoginAsync(User employee)
     {
         LoggedInUser = employee; 
 

@@ -16,7 +16,9 @@ using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
+using MailKit.Net.Smtp;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
 using Stylet;
 using StyletIoC;
 using Syncfusion.UI.Xaml.Scheduler;
@@ -239,8 +241,15 @@ public partial class CalendarViewModel(
                     var events = calendars.SelectMany(x => x.Events).Select(ToEvent).ToList();
 
                     _db.Events.AddRange(events);
-                    
+
                     AddEvents(events);
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        _snackbar.ShowAsync("Course Schedule Imported",
+                            $"Successfully imported {events.Count} events from Canvas.",
+                            SymbolRegular.Checkmark20, ControlAppearance.Success);
+                    });
                 }
 
                 CalendarView.ImportCanvasScheduleDialog.Hide();
@@ -253,26 +262,6 @@ public partial class CalendarViewModel(
                 throw new ArgumentOutOfRangeException();
         }
     }
-
-    // public async void ImportCanvas()
-    // {
-    //     if (_main.LoggedInUser is null) return;
-    //     if (string.IsNullOrWhiteSpace(_main.LoggedInUser.CanvasToken))
-    //     {
-    //         await _snackbar.ShowAsync("Error", "Canvas token is not set.", SymbolRegular.ErrorCircle20, ControlAppearance.Caution);
-    //         return;
-    //     }
-
-    //     var api = CanvasUtilities.CreateCanvasApi(
-    //         "9822~8U1rMaW7lQN24wcaAL8aRgyDfgSsjn19Z5mbm7JhC9qq6YMRSOP1zmurpSr49hVh");
-
-    //     var activities = await api.GetActivityStream(true);
-
-    //     foreach (var activity in activities)
-    //     {
-    //         Console.WriteLine(activity.Title);
-    //     }
-    // }
 
     public async Task ImportCORSchedule()
     {
@@ -289,8 +278,15 @@ public partial class CalendarViewModel(
                     var cor     = ParseEvents(ImportCORScheduleInput);
                     var courses = cor.SelectMany(AddCORSchedule).ToList();
                     var events  = courses.Select(x => x.Schedule).ToList();
-                    
+
                     AddEvents(events);
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        _snackbar.ShowAsync("Course Schedule Imported",
+                            $"Successfully imported {courses.Count} courses from CORS.",
+                            SymbolRegular.Checkmark20, ControlAppearance.Success);
+                    });
                 }
 
                 CalendarView.ImportCORScheduleDialog.Hide();
@@ -574,6 +570,63 @@ public partial class CalendarViewModel(
                     ControlAppearance.Caution);
             });
         }
+    }
+
+    public void OnReminderAlertOpening(SfScheduler? sender, ReminderAlertOpeningEventArgs e)
+    {
+        if (Main.LoggedInUser is null) return;
+
+        var email = Main.LoggedInUser.Email;
+        if (string.IsNullOrWhiteSpace(email)) return;
+
+        var subject = "Event Reminder";
+        var message = "You have an upcoming event in 15 minutes. Don't forget to attend!";
+        var link    = "https://feu.instructure.com/courses/12345/assignments/12345/submissions/12345";
+
+        SendEventReminders(Main.LoggedInUser.Name, email, subject, message, link);
+    }
+
+    public void SendEventReminders(string username, string emailAddress, string subject, string message, string link)
+    {
+        var email = new MimeMessage();
+        email.From.Add(new MailboxAddress(username, "jcf.ta1@gmail.com"));
+
+        email.To.Clear();
+        email.To.Add(new MailboxAddress(emailAddress, emailAddress));
+
+        email.Subject = subject;
+
+        email.Body = new TextPart("html")
+        {
+            Text = $"""
+                    <div style='background-color: #f2f2f2; border-radius: 10px; padding: 20px;'>
+                        <p style='font-size: 18px; color: #333; font-family: Arial, sans-serif;'>Hi {username},</p>
+                        <div style='background-color: #ffffff; border-radius: 10px; padding: 20px; margin-top: 20px;'>
+                            <p style='font-size: 16px; color: #555; font-family: Arial, sans-serif;'>
+                                {message}
+                            </p>
+                            <p style='text-align: center; margin-top: 30px;'>
+                                <a href='{link}'
+                                style='display: inline-block; padding: 15px 30px; background-color: #ff6f61; color: #fff;
+                                        text-decoration: none; border-radius: 5px; font-size: 16px; font-family: Arial, sans-serif;'>
+                                    View Event
+                                </a>
+                            </p>
+                        </div>
+                        <div style='margin-top: 20px; text-align: center;'>
+                            <p1 style='text-align: center; font-size: 2.5rem; margin-bottom: 30px; color: #4CAF50; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); animation: neon 1.5s infinite alternate;'>🎉Event Reminder 📧</p1>
+                        </div>
+                    </div>
+                    """
+        };
+
+        using var client = new SmtpClient();
+
+        client.Connect("smtp.gmail.com", 465, true);
+        client.Authenticate("jcf.ta1@gmail.com", "oqufpsttleqnblod");
+
+        client.Send(email);
+        client.Disconnect(true);
     }
 
     protected override void OnViewLoaded()

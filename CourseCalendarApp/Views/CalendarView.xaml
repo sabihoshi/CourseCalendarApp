@@ -38,6 +38,7 @@
             Grid.Row="1" x:Name="Calendar"
             ItemsSource="{Binding Events}"
             AppointmentEditorClosing="{s:Action OnEditorClosed}"
+            ReminderAlertOpening="{s:Action OnReminderAlertOpening}"
 
             ViewType="Week" AllowedViewTypes="Month,Day,Week,WorkWeek"
             DisplayDate="{Binding DisplayDate}"

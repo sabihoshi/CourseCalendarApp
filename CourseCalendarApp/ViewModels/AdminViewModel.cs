@@ -28,7 +28,7 @@ public class AdminViewModel : Screen
 
     public PersonalInfoViewModel UserInfoView { get; }
 
-    public User SelectedEmployee
+    public User SelectedUser
     {
         get => UserListView.SelectedUser!;
         set => UserListView.SelectedUser = value;
@@ -44,7 +44,7 @@ public class AdminViewModel : Screen
 
     private void OnEmployeeSelected()
     {
-        UserInfoView.User = SelectedEmployee;
+        UserInfoView.User = SelectedUser;
         SelectedIndex     = 1;
 
         UserInfoView.Activate();
