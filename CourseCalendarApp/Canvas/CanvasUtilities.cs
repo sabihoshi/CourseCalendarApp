@@ -11,7 +11,7 @@ public static class CanvasUtilities
 {
     private static readonly Config Config = new()
     {
-        UnknownTags       = Bypass,
+        UnknownTags = Bypass,
         SmartHrefHandling = true
     };
 

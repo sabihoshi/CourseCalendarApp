@@ -38,11 +38,13 @@ public class Bootstrapper : Bootstrapper<MainWindowViewModel>
             db.Users.Add(new User
             {
                 CanvasToken = "9822~oENjkeVuxfNMRP3kdsJtQXRRPhNeyCKWkvL9VMCwaRaFM8RHzepHGQi1FsEWJhqc",
-                Email       = "202110577@fit.edu.ph",
-                Name        = "Admin",
-                AccessType  = "Admin",
-                Username    = "admin",
-                Password    = Crypto.HashPassword("password")
+                Email = "202110577@fit.edu.ph",
+                Name = "Admin",
+                AccessType = "Admin",
+                Username = "admin",
+                Password = Crypto.HashPassword("password"),
+                StudentId = 202110577,
+                PortalPassword = "2002-01-07"
             });
 
             db.SaveChanges();

@@ -64,7 +64,7 @@ public class MainWindowViewModel : Conductor<IScreen>
 
     public RegistrationViewModel RegistrationPage { get; }
 
-    public Screen FirstPage => HomePage;
+    public Screen FirstPage => LoginPage;
 
     public SettingsPageViewModel SettingsPage { get; }
 

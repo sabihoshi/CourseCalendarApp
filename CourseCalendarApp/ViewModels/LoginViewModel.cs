@@ -23,6 +23,11 @@ public class LoginViewModel(
 
     public string Username { get; set; } = string.Empty;
 
+    public async Task Register()
+    {
+        main.NavigateToItem(main.RegistrationPage);
+    }
+
     public async Task Login()
     {
         LoginError = true;

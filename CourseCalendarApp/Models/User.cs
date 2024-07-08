@@ -22,6 +22,10 @@ public class User
 
     public string? CanvasToken { get; set; }
 
+    public int StudentId { get; set; }
+
+    public string? PortalPassword { get; set; }
+
     public string? Email { get; set; }
 
     public string? Organization { get; set; }

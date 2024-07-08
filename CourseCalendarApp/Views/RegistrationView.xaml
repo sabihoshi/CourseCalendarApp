@@ -13,28 +13,28 @@
     xmlns:viewModels="clr-namespace:CourseCalendarApp.ViewModels"
 
     d:DataContext="{d:DesignInstance Type=viewModels:RegistrationViewModel}">
-    <GroupBox Header="New Account" HorizontalAlignment="Center">
-        <modern:SimpleStackPanel>
-            <GroupBox Header="Access Level" Visibility="{Binding CanChangeAccessType, Converter={StaticResource BooleanToVisibilityConverter}}">
+    <GroupBox Header="New Account" MinWidth="300" MaxWidth="450">
+        <modern:SimpleStackPanel Spacing="16">
+            <GroupBox Header="Access Level"
+                      Visibility="{Binding CanChangeAccessType, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <ComboBox SelectedItem="{Binding AccessType}" SelectedIndex="0">
                     <ComboBoxItem>Admin</ComboBoxItem>
                     <ComboBoxItem>User</ComboBoxItem>
                 </ComboBox>
             </GroupBox>
 
-            <GroupBox Header="Name">
-                <modern:SimpleStackPanel Orientation="Horizontal">
-                    <ui:TextBox Icon="BookContacts20" MinWidth="300" PlaceholderText="Name"
-                                Text="{Binding Name}" />
-                </modern:SimpleStackPanel>
-            </GroupBox>
-
-            <ui:TextBox Icon="Mail12" MinWidth="300" PlaceholderText="Email" Text="{Binding Email, Mode=OneWayToSource}" />
-            <ui:TextBox Icon="Person12" MinWidth="300" PlaceholderText="Username" Text="{Binding Username, Mode=OneWayToSource}" />
+            <ui:TextBox Icon="BookContacts20" PlaceholderText="Name"
+                        Text="{Binding Name}" />
+            <ui:TextBox Icon="Mail12" PlaceholderText="Email" Text="{Binding Email, Mode=OneWayToSource}" />
+            <ui:TextBox Icon="Person12" PlaceholderText="Username" Text="{Binding Username, Mode=OneWayToSource}" />
             <ui:PasswordBox
-                Icon="Password16" MinWidth="300" PlaceholderText="Password"
+                Icon="Password16" PlaceholderText="Password"
                 Password="{Binding Password, Mode=TwoWay}" />
-            <ui:Button Appearance="Primary" Command="{s:Action Register}" HorizontalAlignment="Right">Register</ui:Button>
+            <modern:SimpleStackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <ui:Button Appearance="Secondary" Command="{s:Action Login}" HorizontalAlignment="Right">Login</ui:Button>
+                <ui:Button Appearance="Primary" Command="{s:Action Register}" HorizontalAlignment="Right">Register</ui:Button>
+            </modern:SimpleStackPanel>
+       
         </modern:SimpleStackPanel>
     </GroupBox>
 </UserControl>

@@ -30,9 +30,28 @@
 
             <ComboBox SelectedItem="{Binding SelectedEventType}" SelectedIndex="0">
                 <ComboBoxItem>Event</ComboBoxItem>
-                <ComboBoxItem>Organization Event</ComboBoxItem>
+                <ComboBoxItem>Organization </ComboBoxItem>
             </ComboBox>
         </modern:SimpleStackPanel>
+
+        <modern:SimpleStackPanel
+            Visibility="{Binding Main.IsLoggedOut, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Grid.Row="0" Margin="0,8" Orientation="Horizontal">
+
+            <ComboBox SelectedItem="{Binding SelectedTerm}">
+                <ComboBoxItem>1st</ComboBoxItem>
+                <ComboBoxItem>2nd</ComboBoxItem>
+                <ComboBoxItem>3rd</ComboBoxItem>
+                <ComboBoxItem>Summer</ComboBoxItem>
+            </ComboBox>
+
+            <ComboBox 
+                ItemsSource="{Binding Years}" 
+                SelectedItem="{Binding SelectedYear}"
+                IsEnabled="{Binding CanSelectYear}"
+                />
+        </modern:SimpleStackPanel>
+
 
         <syncfusion:SfScheduler
             Grid.Row="1" x:Name="Calendar"
@@ -42,7 +61,6 @@
 
             ViewType="Week" AllowedViewTypes="Month,Day,Week,WorkWeek"
             DisplayDate="{Binding DisplayDate}"
-            EnableReminder="True"
 
             syncfusion:SfSkinManager.Theme="{syncfusion:SkinManagerExtension ThemeName=Windows11Dark}">
             <syncfusion:SfScheduler.MonthViewSettings>
@@ -70,8 +88,11 @@
 
                 <ui:ToggleSwitch IsChecked="{Binding ReplaceCourseSchedule}"
                                  Content="Force replace existing schedules" />
-            </modern:SimpleStackPanel>
 
+                <ComboBox>
+                    <ComboBoxItem>Test</ComboBoxItem>
+                </ComboBox>
+            </modern:SimpleStackPanel>
         </ui:Dialog>
 
         <ui:Dialog x:Name="ImportCanvasScheduleDialog"
@@ -105,14 +126,13 @@
                                     Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
                                     Width="32" Height="32" Margin="6"
                                     HorizontalAlignment="Center" VerticalAlignment="Center"
-                                    Fill="{ui:ThemeResource ControlStrongStrokeColorDefaultBrush}">
-                                </Ellipse>
+                                    Fill="{ui:ThemeResource ControlStrongStrokeColorDefaultBrush}" />
 
                                 <Label
                                     Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
                                     Width="32" Height="32" Margin="6"
                                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                                    
+
                                     Content="{Binding CourseNameAcronym}" />
 
                                 <TextBlock

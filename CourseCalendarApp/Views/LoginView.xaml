@@ -20,8 +20,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <GroupBox Header="Welcome!" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <modern:SimpleStackPanel MinWidth="450">
+        <GroupBox Header="Welcome!" VerticalAlignment="Center"
+                  MinWidth="300" MaxWidth="450">
+            <modern:SimpleStackPanel>
                 <ui:InfoBar
                     Title="Error" Severity="Error" IsOpen="{Binding LoginError, Mode=TwoWay}"
                     Message="Invalid Username or Password! Please try again." />
@@ -31,7 +32,7 @@
                     Icon="Password16" PlaceholderText="Password"
                     Password="{Binding Password, Mode=TwoWay}" />
                 <modern:SimpleStackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBlock />
+                    <ui:Button Command="{s:Action Register}" Appearance="Secondary" IsDefault="True">Register</ui:Button>
                     <ui:Button Command="{s:Action Login}" Appearance="Primary" IsDefault="True">Login</ui:Button>
                 </modern:SimpleStackPanel>
             </modern:SimpleStackPanel>

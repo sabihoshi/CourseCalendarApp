@@ -34,6 +34,8 @@ public class RegistrationViewModel(
 
     public User? SelectedManager { get; set; }
 
+    public async Task Login() { main.NavigateToItem(main.LoginPage); }
+
     public async Task Register()
     {
         if (string.IsNullOrWhiteSpace(Email))
@@ -66,10 +68,10 @@ public class RegistrationViewModel(
 
         var user = new User
         {
-            Email    = Email,
+            Email = Email,
             Username = Username,
             Password = Crypto.HashPassword(Password),
-            Name     = Name
+            Name = Name
         };
 
         db.Users.Add(user);
